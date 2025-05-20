@@ -1,0 +1,29 @@
+# 服务配置
+server:
+  port: 21090
+  servlet:
+    context-path: /api/personal-heath/v1.0
+# API地址前缀，用于接口拦截放行
+my-server:
+  api-context-path: /api/personal-heath/v1.0
+#MySQL与文件上传限制配置
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 按照实际情况将health-personal改成自己本机数据库新建的数据库名，一样不用改，不一样则改成自己建的
+    url: jdbc:mysql://localhost:3306/personal_health?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    # 按照实际情况将username改成自己本机数据库的账号，不改必错，跑不起来
+    username: root
+    # 按照实际情况将password改成自己本机数据库的密码，不改必错，跑不起来；补充：数据库密码不要用0开头
+    password: 123456
+# 让 Mybatis 在 Mapper目录下找到 XML 映射文件
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+
+
+
