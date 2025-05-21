@@ -3,7 +3,7 @@
 <mapper namespace="cn.kmbeast.mapper.MessageMapper">
 
     <insert id="batchSave">
-        INSERT INTO "message" ("content","message_type","receiver_id","sender_id","is_read","content_id","create_time")
+        INSERT INTO message (content,message_type,receiver_id,sender_id,is_read,content_id,create_time)
         VALUES
         <foreach collection="list" item="message" index="index" separator=",">
             (#{message.content},#{message.messageType},#{message.receiverId},#{message.senderId},#{message.isRead},#{message.contentId},#{message.createTime})
@@ -11,75 +11,78 @@
     </insert>
 
     <update id="update">
-        UPDATE "message"
+        UPDATE message
         <set>
             <if test="isRead != null">
-                "is_read" = #{isRead},
+                is_read = #{isRead},
             </if>
         </set>
-        WHERE "receiver_id" = #{userId}
+        WHERE receiver_id = #{userId}
     </update>
 
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM "message" WHERE "id" IN
+        DELETE FROM message WHERE id IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <select id="query" resultMap="BaseResultMap">
-        SELECT * FROM (
-            SELECT m.*, s."user_name" as sender_name, r."user_avatar" as receiver_avatar, r."user_name" as receiver_name, ROWNUM as rn
-            FROM "message" m
-            LEFT JOIN "user" s ON s."id" = m."sender_id"
-            LEFT JOIN "user" r ON r."id" = m."receiver_id"
-            <where>
-                <if test="receiverId != null">
-                    AND m."receiver_id" = #{receiverId}
-                </if>
-                <if test="senderId != null">
-                    AND m."sender_id" = #{senderId}
-                </if>
-                <if test="messageType != null">
-                    AND m."message_type" = #{messageType}
-                </if>
-                <if test="isRead != null">
-                    AND m."is_read" = #{isRead}
-                </if>
-                <if test="content != null and content != ''">
-                    AND m."content" LIKE '%' || #{content} || '%'
-                </if>
-                <if test="startTime != null and endTime != null">
-                    AND m."create_time" BETWEEN #{startTime} AND #{endTime}
-                </if>
-            </where>
-            ORDER BY m."create_time" DESC
-        ) WHERE rn BETWEEN #{current} AND #{current} + #{size} - 1
+
+        SELECT m.*,
+        u1.user_name AS receiver_name,
+        u1.user_avatar AS receiver_avatar,
+        u2.user_name AS sender_name,
+        e.content AS evaluations_content
+        FROM message m
+        LEFT JOIN user u1 ON u1.id = m.receiver_id
+        LEFT JOIN user u2 ON u2.id = m.sender_id
+        LEFT JOIN evaluations e ON e.id = m.content_id
+        <where>
+            <if test="userId != null">
+                AND m.receiver_id = #{userId}
+            </if>
+            <if test="messageType != null">
+                AND m.message_type = #{messageType}
+            </if>
+            <if test="content != null and content != ''">
+                AND m.content LIKE concat('%',#{content},'%')
+            </if>
+            <if test="isRead != null">
+                AND m.is_read = #{isRead}
+            </if>
+            <if test="startTime != null and endTime != null">
+                AND m.create_time BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        ORDER BY m.create_time DESC
+        <if test="current != null and size != null">
+            LIMIT #{current},#{size}
+        </if>
     </select>
 
     <select id="queryCount" resultType="integer">
+
         SELECT COUNT(*)
-        FROM "message" m
+        FROM message m
         <where>
-            <if test="receiverId != null">
-                AND m."receiver_id" = #{receiverId}
-            </if>
-            <if test="senderId != null">
-                AND m."sender_id" = #{senderId}
+            <if test="userId != null">
+                AND m.receiver_id = #{userId}
             </if>
             <if test="messageType != null">
-                AND m."message_type" = #{messageType}
-            </if>
-            <if test="isRead != null">
-                AND m."is_read" = #{isRead}
+                AND m.message_type = #{messageType}
             </if>
             <if test="content != null and content != ''">
-                AND m."content" LIKE '%' || #{content} || '%'
+                AND m.content LIKE concat('%',#{content},'%')
+            </if>
+            <if test="isRead != null">
+                AND m.is_read = #{isRead}
             </if>
             <if test="startTime != null and endTime != null">
-                AND m."create_time" BETWEEN #{startTime} AND #{endTime}
+                AND m.create_time BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
+
     </select>
 
     <!-- 通用查询映射结果 -->

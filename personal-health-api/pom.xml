@@ -50,9 +50,8 @@
         </dependency>
         <!--数据库链接-->
         <dependency>
-            <groupId>com.dameng</groupId>
-            <artifactId>DmJdbcDriver18</artifactId>
-            <version>8.1.2.141</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <!-- mybatis依赖-->
         <dependency>
