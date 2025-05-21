@@ -3,99 +3,94 @@
 <mapper namespace="cn.kmbeast.mapper.HealthModelConfigMapper">
 
     <insert id="save">
-        INSERT INTO health_model_config (user_id, name, detail, cover, unit, symbol, value_range, is_global)
+        INSERT INTO "health_model_config" ("user_id", "name", "detail", "cover", "unit", "symbol", "value_range", "is_global")
         VALUES (#{userId}, #{name}, #{detail}, #{cover}, #{unit}, #{symbol}, #{valueRange}, #{isGlobal})
     </insert>
 
     <update id="update">
-        UPDATE health_model_config
+        UPDATE "health_model_config"
         <set>
             <if test="name != null and name != ''">
-                name = #{name},
+                "name" = #{name},
             </if>
             <if test="detail != null and detail != ''">
-                detail = #{detail},
+                "detail" = #{detail},
             </if>
             <if test="cover != null and cover != ''">
-                cover = #{cover},
+                "cover" = #{cover},
             </if>
             <if test="unit != null and unit != ''">
-                unit = #{unit},
+                "unit" = #{unit},
             </if>
             <if test="symbol != null and symbol != ''">
-                symbol = #{symbol},
+                "symbol" = #{symbol},
             </if>
             <if test="valueRange != null and valueRange != ''">
-                value_range = #{valueRange},
+                "value_range" = #{valueRange},
             </if>
         </set>
-        WHERE id = #{id}
+        WHERE "id" = #{id}
     </update>
 
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM health_model_config WHERE id IN
+        DELETE FROM "health_model_config" WHERE "id" IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <select id="query" resultMap="BaseResultMap">
-
-        SELECT h.*,
-        u.user_name
-        FROM health_model_config h
-        LEFT JOIN user u ON u.id = h.user_id
-        <where>
-            <if test="id != null">
-                AND h.id = #{id}
-            </if>
-            <if test="userId != null">
-                AND h.user_id = #{userId}
-            </if>
-            <if test="name != null and name != ''">
-                AND h.name LIKE concat('%',#{name},'%')
-            </if>
-            <if test="detail != null and detail != ''">
-                AND h.detail LIKE concat('%',#{detail},'%')
-            </if>
-            <if test="isGlobal != null and isGlobal != ''">
-                AND h.is_global = #{isGlobal}
-            </if>
-            <if test="unit != null and unit != ''">
-                AND h.unit LIKE concat('%',#{unit},'%')
-            </if>
-            <if test="symbol != null and symbol != ''">
-                AND h.symbol LIKE concat('%',#{symbol},'%')
-            </if>
-        </where>
-        ORDER BY h.id DESC
-        <if test="current != null and size != null">
-            LIMIT #{current},#{size}
-        </if>
+        SELECT * FROM (
+            SELECT h.*, u."user_name", ROWNUM as rn
+            FROM "health_model_config" h
+            LEFT JOIN "user" u ON u."id" = h."user_id"
+            <where>
+                <if test="userId != null">
+                    AND h."user_id" = #{userId}
+                </if>
+                <if test="name != null and name != ''">
+                    AND h."name" LIKE '%' || #{name} || '%'
+                </if>
+                <if test="detail != null and detail != ''">
+                    AND h."detail" LIKE '%' || #{detail} || '%'
+                </if>
+                <if test="unit != null and unit != ''">
+                    AND h."unit" LIKE '%' || #{unit} || '%'
+                </if>
+                <if test="symbol != null and symbol != ''">
+                    AND h."symbol" LIKE '%' || #{symbol} || '%'
+                </if>
+                <if test="isGlobal != null">
+                    AND h."is_global" = #{isGlobal}
+                </if>
+            </where>
+            ORDER BY h."id" DESC
+        ) WHERE rn BETWEEN #{current} AND #{current} + #{size} - 1
     </select>
 
     <select id="queryCount" resultType="integer">
-
         SELECT COUNT(*)
-        FROM health_model_config h
+        FROM "health_model_config" h
         <where>
             <if test="userId != null">
-                AND h.user_id = #{userId}
+                AND h."user_id" = #{userId}
             </if>
             <if test="name != null and name != ''">
-                AND h.name LIKE concat('%',#{name},'%')
+                AND h."name" LIKE '%' || #{name} || '%'
             </if>
             <if test="detail != null and detail != ''">
-                AND h.detail LIKE concat('%',#{detail},'%')
+                AND h."detail" LIKE '%' || #{detail} || '%'
             </if>
             <if test="unit != null and unit != ''">
-                AND h.unit LIKE concat('%',#{unit},'%')
+                AND h."unit" LIKE '%' || #{unit} || '%'
             </if>
             <if test="symbol != null and symbol != ''">
-                AND h.symbol LIKE concat('%',#{symbol},'%')
+                AND h."symbol" LIKE '%' || #{symbol} || '%'
+            </if>
+            <if test="isGlobal != null">
+                AND h."is_global" = #{isGlobal}
             </if>
         </where>
-
     </select>
 
     <!-- 通用查询映射结果 -->
