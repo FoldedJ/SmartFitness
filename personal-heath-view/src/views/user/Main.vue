@@ -33,7 +33,7 @@
                     <p style="font-size: 12px;padding: 3px 0;">
                         <span class="modelName">*个人邮箱</span>
                     </p>
-                    <input class="modelInput" type="text" v-model="data.email" placeholder="用户名">
+                    <input class="modelInput" type="text" v-model="data.email" placeholder="个人邮箱">
                 </el-row>
             </el-row>
             <span slot="footer" class="dialog-footer">
