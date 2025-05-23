@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.kmbeast.mapper.EvaluationsMapper">
+<mapper namespace="cn.foldedj.mapper.EvaluationsMapper">
 
     <!-- resultMap 用于定义结果集映射 -->
-    <resultMap id="commentParentResultMap" type="cn.kmbeast.pojo.vo.CommentParentVO">
+    <resultMap id="commentParentResultMap" type="cn.foldedj.pojo.vo.CommentParentVO">
         <id property="id" column="ID"/>
         <result property="userId" column="USER_ID"/>
         <result property="userName" column="USER_NAME"/>
@@ -17,7 +17,7 @@
                 jdbcType="TIMESTAMP"/>
         <!-- 使用 collection 标签来映射一对多关系 -->
         <collection property="commentChildVOS"
-                    ofType="cn.kmbeast.pojo.vo.CommentChildVO"
+                    ofType="cn.foldedj.pojo.vo.CommentChildVO"
                     column="ID"
                     foreignColumn="ID"
                     select="getChildCommentsByParentId"/>
@@ -49,7 +49,7 @@
 
     <!-- 根据父级评论ID查询子级评论 -->
     <select id="getChildCommentsByParentId"
-            resultType="cn.kmbeast.pojo.vo.CommentChildVO"
+            resultType="cn.foldedj.pojo.vo.CommentChildVO"
             parameterType="Integer">
         SELECT e.ID AS ID,
                e.CONTENT AS CONTENT,
@@ -70,7 +70,7 @@
         ORDER BY ID DESC
     </select>
 
-    <select id="query" resultType="cn.kmbeast.pojo.vo.CommentChildVO">
+    <select id="query" resultType="cn.foldedj.pojo.vo.CommentChildVO">
         SELECT e.ID AS ID,
                e.CONTENT AS CONTENT,
                e.CREATE_TIME AS CREATE_TIME,

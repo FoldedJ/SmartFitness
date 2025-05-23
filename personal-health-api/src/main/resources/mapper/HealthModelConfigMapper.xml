@@ -1,115 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.kmbeast.mapper.HealthModelConfigMapper">
+<mapper namespace="cn.foldedj.mapper.HealthModelConfigMapper">
 
     <insert id="save">
-        INSERT INTO health_model_config (user_id, name, detail, cover, unit, symbol, value_range, is_global)
+        INSERT INTO SYSDBA.HEALTH_MODEL_CONFIG (USER_ID, NAME, DETAIL, COVER, UNIT, SYMBOL, VALUE_RANGE, IS_GLOBAL)
         VALUES (#{userId}, #{name}, #{detail}, #{cover}, #{unit}, #{symbol}, #{valueRange}, #{isGlobal})
     </insert>
 
     <update id="update">
-        UPDATE health_model_config
+        UPDATE SYSDBA.HEALTH_MODEL_CONFIG
         <set>
             <if test="name != null and name != ''">
-                name = #{name},
+                NAME = #{name},
             </if>
             <if test="detail != null and detail != ''">
-                detail = #{detail},
+                DETAIL = #{detail},
             </if>
             <if test="cover != null and cover != ''">
-                cover = #{cover},
+                COVER = #{cover},
             </if>
             <if test="unit != null and unit != ''">
-                unit = #{unit},
+                UNIT = #{unit},
             </if>
             <if test="symbol != null and symbol != ''">
-                symbol = #{symbol},
+                SYMBOL = #{symbol},
             </if>
             <if test="valueRange != null and valueRange != ''">
-                value_range = #{valueRange},
+                VALUE_RANGE = #{valueRange},
             </if>
         </set>
-        WHERE id = #{id}
+        WHERE ID = #{id}
     </update>
 
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM health_model_config WHERE id IN
+        DELETE FROM SYSDBA.HEALTH_MODEL_CONFIG WHERE ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <select id="query" resultMap="BaseResultMap">
-
         SELECT h.*,
-        u.user_name
-        FROM health_model_config h
-        LEFT JOIN user u ON u.id = h.user_id
+        u.USER_NAME
+        FROM SYSDBA.HEALTH_MODEL_CONFIG h
+        LEFT JOIN SYSDBA."USER" u ON u.ID = h.USER_ID
         <where>
             <if test="id != null">
-                AND h.id = #{id}
+                AND h.ID = #{id}
             </if>
             <if test="userId != null">
-                AND h.user_id = #{userId}
+                AND h.USER_ID = #{userId}
             </if>
             <if test="name != null and name != ''">
-                AND h.name LIKE concat('%',#{name},'%')
+                AND h.NAME LIKE '%' || #{name} || '%'
             </if>
             <if test="detail != null and detail != ''">
-                AND h.detail LIKE concat('%',#{detail},'%')
+                AND h.DETAIL LIKE '%' || #{detail} || '%'
             </if>
             <if test="isGlobal != null and isGlobal != ''">
-                AND h.is_global = #{isGlobal}
+                AND h.IS_GLOBAL = #{isGlobal}
             </if>
             <if test="unit != null and unit != ''">
-                AND h.unit LIKE concat('%',#{unit},'%')
+                AND h.UNIT LIKE '%' || #{unit} || '%'
             </if>
             <if test="symbol != null and symbol != ''">
-                AND h.symbol LIKE concat('%',#{symbol},'%')
+                AND h.SYMBOL LIKE '%' || #{symbol} || '%'
             </if>
         </where>
-        ORDER BY h.id DESC
+        ORDER BY h.ID DESC
         <if test="current != null and size != null">
-            LIMIT #{current},#{size}
+            OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
         </if>
     </select>
 
     <select id="queryCount" resultType="integer">
-
         SELECT COUNT(*)
-        FROM health_model_config h
+        FROM SYSDBA.HEALTH_MODEL_CONFIG h
         <where>
             <if test="userId != null">
-                AND h.user_id = #{userId}
+                AND h.USER_ID = #{userId}
             </if>
             <if test="name != null and name != ''">
-                AND h.name LIKE concat('%',#{name},'%')
+                AND h.NAME LIKE '%' || #{name} || '%'
             </if>
             <if test="detail != null and detail != ''">
-                AND h.detail LIKE concat('%',#{detail},'%')
+                AND h.DETAIL LIKE '%' || #{detail} || '%'
             </if>
             <if test="unit != null and unit != ''">
-                AND h.unit LIKE concat('%',#{unit},'%')
+                AND h.UNIT LIKE '%' || #{unit} || '%'
             </if>
             <if test="symbol != null and symbol != ''">
-                AND h.symbol LIKE concat('%',#{symbol},'%')
+                AND h.SYMBOL LIKE '%' || #{symbol} || '%'
             </if>
         </where>
-
     </select>
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.vo.HealthModelConfigVO">
-        <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
-        <result column="user_name" property="userName"/>
-        <result column="name" property="name"/>
-        <result column="detail" property="detail"/>
-        <result column="cover" property="cover"/>
-        <result column="unit" property="unit"/>
-        <result column="symbol" property="symbol"/>
-        <result column="value_range" property="valueRange"/>
-        <result column="is_global" property="isGlobal"/>
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.vo.HealthModelConfigVO">
+        <id column="ID" property="id"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="USER_NAME" property="userName"/>
+        <result column="NAME" property="name"/>
+        <result column="DETAIL" property="detail"/>
+        <result column="COVER" property="cover"/>
+        <result column="UNIT" property="unit"/>
+        <result column="SYMBOL" property="symbol"/>
+        <result column="VALUE_RANGE" property="valueRange"/>
+        <result column="IS_GLOBAL" property="isGlobal"/>
     </resultMap>
 
 </mapper>

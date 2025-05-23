@@ -1,101 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.kmbeast.mapper.NewsMapper">
+<mapper namespace="cn.foldedj.mapper.NewsMapper">
 
     <insert id="save">
-        INSERT INTO news (name, content, tag_id, cover, reader_ids, is_top, create_time)
+        INSERT INTO SYSDBA.NEWS (NAME, CONTENT, TAG_ID, COVER, READER_IDS, IS_TOP, CREATE_TIME)
         VALUES (#{name}, #{content}, #{tagId}, #{cover}, #{readerIds}, #{isTop}, #{createTime})
     </insert>
 
     <update id="update">
-        UPDATE news
+        UPDATE SYSDBA.NEWS
         <set>
             <if test="name != null and name != ''">
-                name = #{name},
+                NAME = #{name},
             </if>
             <if test="content != null and content != ''">
-                content = #{content},
+                CONTENT = #{content},
             </if>
             <if test="tagId != null">
-                tag_id = #{tagId},
+                TAG_ID = #{tagId},
             </if>
             <if test="cover != null and cover != ''">
-                cover = #{cover},
+                COVER = #{cover},
             </if>
             <if test="readerIds != null and readerIds != ''">
-                reader_ids = #{readerIds},
+                READER_IDS = #{readerIds},
             </if>
             <if test="isTop != null">
-                is_top = #{isTop},
+                IS_TOP = #{isTop},
             </if>
         </set>
-        WHERE id = #{id}
+        WHERE ID = #{id}
     </update>
 
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM news WHERE id IN
+        DELETE FROM SYSDBA.NEWS WHERE ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <select id="query" resultMap="BaseResultMap">
-
-        SELECT n.*,t.name AS tag_name
-        FROM news n
-        LEFT JOIN tags t ON t.id = n.tag_id
+        SELECT n.*,t.NAME AS TAG_NAME
+        FROM SYSDBA.NEWS n
+        LEFT JOIN SYSDBA.TAGS t ON t.ID = n.TAG_ID
         <where>
             <if test="name != null and name != ''">
-                AND n.name LIKE concat('%',#{name},'%')
+                AND n.NAME LIKE '%' || #{name} || '%'
             </if>
             <if test="tagId != null">
-                AND n.tag_id = #{tagId}
+                AND n.TAG_ID = #{tagId}
             </if>
             <if test="isTop != null">
-                AND n.is_top = #{isTop}
+                AND n.IS_TOP = #{isTop}
             </if>
             <if test="startTime != null and endTime != null">
-                AND n.create_time BETWEEN #{startTime} AND #{endTime}
+                AND n.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
-        ORDER BY n.id DESC
+        ORDER BY n.ID DESC
         <if test="current != null and size != null">
-            LIMIT #{current},#{size}
+            OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
         </if>
     </select>
 
     <select id="queryCount" resultType="integer">
-
         SELECT COUNT(*)
-        FROM news n
+        FROM SYSDBA.NEWS n
         <where>
             <if test="name != null and name != ''">
-                AND n.name LIKE concat('%',#{name},'%')
+                AND n.NAME LIKE '%' || #{name} || '%'
             </if>
             <if test="tagId != null">
-                AND n.tag_id = #{tagId}
+                AND n.TAG_ID = #{tagId}
             </if>
             <if test="isTop != null">
-                AND n.is_top = #{isTop}
+                AND n.IS_TOP = #{isTop}
             </if>
             <if test="startTime != null and endTime != null">
-                AND n.create_time BETWEEN #{startTime} AND #{endTime}
+                AND n.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
-
     </select>
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.vo.NewsVO">
-        <id column="id" property="id"/>
-        <result column="name" property="name"/>
-        <result column="content" property="content"/>
-        <result column="tag_id" property="tagId"/>
-        <result column="cover" property="cover"/>
-        <result column="reader_ids" property="readerIds"/>
-        <result column="is_top" property="isTop"/>
-        <result column="create_time" property="createTime"/>
-        <result column="tag_name" property="tagName"/>
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.vo.NewsVO">
+        <id column="ID" property="id"/>
+        <result column="NAME" property="name"/>
+        <result column="CONTENT" property="content"/>
+        <result column="TAG_ID" property="tagId"/>
+        <result column="COVER" property="cover"/>
+        <result column="READER_IDS" property="readerIds"/>
+        <result column="IS_TOP" property="isTop"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="TAG_NAME" property="tagName"/>
     </resultMap>
 
 </mapper>

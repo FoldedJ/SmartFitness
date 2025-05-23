@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.kmbeast.mapper.NewsSaveMapper">
+<mapper namespace="cn.foldedj.mapper.NewsSaveMapper">
 
     <insert id="save">
         INSERT INTO SYSDBA.NEWS_SAVE (USER_ID, NEWS_ID, CREATE_TIME)
@@ -57,17 +57,17 @@
     </select>
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.vo.NewsSaveVO">
-        <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
-        <result column="news_id" property="newsId"/>
-        <result column="create_time" property="createTime"/>
-        <result column="user_name" property="userName"/>
-        <result column="cover" property="cover"/>
-        <result column="name" property="name"/>
-        <result column="content" property="content"/>
-        <result column="tag_name" property="tagName"/>
-        <result column="news_create_time" property="newsCreateTime"/>
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.vo.NewsSaveVO">
+        <id column="ID" property="id"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="NEWS_ID" property="newsId"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="USER_NAME" property="userName"/>
+        <result column="COVER" property="cover"/>
+        <result column="NAME" property="name"/>
+        <result column="CONTENT" property="content"/>
+        <result column="TAG_NAME" property="tagName"/>
+        <result column="NEWS_CREATE_TIME" property="newsCreateTime"/>
     </resultMap>
 
 </mapper>

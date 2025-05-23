@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.kmbeast.mapper.TagsMapper">
+<mapper namespace="cn.foldedj.mapper.TagsMapper">
 
     <insert id="save">
         INSERT INTO SYSDBA.TAGS (NAME)
@@ -52,7 +52,7 @@
     </select>
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.entity.Tags">
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.entity.Tags">
         <id column="ID" property="id"/>
         <result column="NAME" property="name"/>
     </resultMap>

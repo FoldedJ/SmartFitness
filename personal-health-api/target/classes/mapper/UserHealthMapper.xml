@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.kmbeast.mapper.UserHealthMapper">
+<mapper namespace="cn.foldedj.mapper.UserHealthMapper">
 
     <insert id="batchSave">
         INSERT INTO SYSDBA.USER_HEALTH (USER_ID, HEALTH_MODEL_CONFIG_ID, VALUE, CREATE_TIME)
@@ -70,17 +70,17 @@
     </select>
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.vo.UserHealthVO">
-        <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
-        <result column="user_name" property="userName"/>
-        <result column="health_model_config_id" property="healthModelConfigId"/>
-        <result column="value" property="value"/>
-        <result column="create_time" property="createTime"/>
-        <result column="name" property="name"/>
-        <result column="unit" property="unit"/>
-        <result column="symbol" property="symbol"/>
-        <result column="value_range" property="valueRange"/>
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.vo.UserHealthVO">
+        <id column="ID" property="id"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="USER_NAME" property="userName"/>
+        <result column="HEALTH_MODEL_CONFIG_ID" property="healthModelConfigId"/>
+        <result column="VALUE" property="value"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="NAME" property="name"/>
+        <result column="UNIT" property="unit"/>
+        <result column="SYMBOL" property="symbol"/>
+        <result column="VALUE_RANGE" property="valueRange"/>
     </resultMap>
 
 </mapper>

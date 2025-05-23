@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.kmbeast.mapper.UserMapper">
-    <insert id="insert" parameterType="cn.kmbeast.pojo.entity.User">
+<mapper namespace="cn.foldedj.mapper.UserMapper">
+    <insert id="insert" parameterType="cn.foldedj.pojo.entity.User">
         INSERT INTO SYSDBA."USER" (USER_ACCOUNT,
                           USER_NAME,
                           USER_PWD,
@@ -21,7 +21,7 @@
                 #{isWord},
                 #{createTime})
     </insert>
-    <update id="update" parameterType="cn.kmbeast.pojo.entity.User">
+    <update id="update" parameterType="cn.foldedj.pojo.entity.User">
         UPDATE SYSDBA."USER"
         <set>
             <if test="userAccount != null">
@@ -144,17 +144,17 @@
     </select>
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.entity.User">
-        <id column="id" property="id"/>
-        <result column="user_account" property="userAccount"/>
-        <result column="user_name" property="userName"/>
-        <result column="user_pwd" property="userPwd"/>
-        <result column="user_avatar" property="userAvatar"/>
-        <result column="user_email" property="userEmail"/>
-        <result column="user_role" property="userRole"/>
-        <result column="is_login" property="isLogin"/>
-        <result column="is_word" property="isWord"/>
-        <result column="create_time" property="createTime"/>
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.entity.User">
+        <id column="ID" property="id"/>
+        <result column="USER_ACCOUNT" property="userAccount"/>
+        <result column="USER_NAME" property="userName"/>
+        <result column="USER_PWD" property="userPwd"/>
+        <result column="USER_AVATAR" property="userAvatar"/>
+        <result column="USER_EMAIL" property="userEmail"/>
+        <result column="USER_ROLE" property="userRole"/>
+        <result column="IS_LOGIN" property="isLogin"/>
+        <result column="IS_WORD" property="isWord"/>
+        <result column="CREATE_TIME" property="createTime"/>
     </resultMap>
 
 
