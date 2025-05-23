@@ -2,7 +2,7 @@
     <div>
         <ul class="nav">
             <li>
-                <Logo sysName="健康有道"/>
+                <Logo sysName="小绿书"/>
             </li>
             <li v-if="!item.isHidden" :style="{
                 fontSize: selectedIndex === index ? '18px' : '14px',
@@ -76,7 +76,7 @@ export default {
             selectedIndex: 0,
             messagePath: '/message',
             loginPath: '/login',
-            sysName: '健康有道',
+            sysName: '小绿书',
             defaultPath: '/news-record',
             filterText: '',
             noReadMsg: 0,
