@@ -3,7 +3,7 @@
 <mapper namespace="cn.kmbeast.mapper.UserHealthMapper">
 
     <insert id="batchSave">
-        INSERT INTO user_health (user_id, health_model_config_id, value, create_time)
+        INSERT INTO SYSDBA.USER_HEALTH (USER_ID, HEALTH_MODEL_CONFIG_ID, VALUE, CREATE_TIME)
         VALUES
         <foreach collection="list" item="userHealth" index="index" separator=",">
             (#{userHealth.userId},#{userHealth.healthModelConfigId},#{userHealth.value},#{userHealth.createTime})
@@ -11,17 +11,17 @@
     </insert>
 
     <update id="update">
-        UPDATE user_health
+        UPDATE SYSDBA.USER_HEALTH
         <set>
             <if test="value != null and value != ''">
-                value = #{value},
+                VALUE = #{value},
             </if>
         </set>
-        WHERE id = #{id}
+        WHERE ID = #{id}
     </update>
 
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM user_health WHERE id IN
+        DELETE FROM SYSDBA.USER_HEALTH WHERE ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -29,24 +29,24 @@
 
     <select id="query" resultMap="BaseResultMap">
 
-        SELECT uh.*,u.user_name,hmc.name,hmc.unit,hmc.symbol,hmc.value_range
-        FROM user_health uh
-        LEFT JOIN user u ON u.id = uh.user_id
-        LEFT JOIN health_model_config hmc ON hmc.id = uh.health_model_config_id
+        SELECT uh.*,u.USER_NAME,hmc.NAME,hmc.UNIT,hmc.SYMBOL,hmc.VALUE_RANGE
+        FROM SYSDBA.USER_HEALTH uh
+        LEFT JOIN SYSDBA."USER" u ON u.ID = uh.USER_ID
+        LEFT JOIN SYSDBA.HEALTH_MODEL_CONFIG hmc ON hmc.ID = uh.HEALTH_MODEL_CONFIG_ID
         <where>
             <if test="userId != null">
-                AND uh.user_id = #{userId}
+                AND uh.USER_ID = #{userId}
             </if>
             <if test="healthModelConfigId != null">
-                AND uh.health_model_config_id = #{healthModelConfigId}
+                AND uh.HEALTH_MODEL_CONFIG_ID = #{healthModelConfigId}
             </if>
             <if test="startTime != null and endTime != null">
-                AND uh.create_time BETWEEN #{startTime} AND #{endTime}
+                AND uh.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
-        ORDER BY uh.create_time DESC
+        ORDER BY uh.CREATE_TIME DESC
         <if test="current != null and size != null">
-            LIMIT #{current},#{size}
+            OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
         </if>
 
     </select>
@@ -54,16 +54,16 @@
     <select id="queryCount" resultType="integer">
 
         SELECT COUNT(*)
-        FROM user_health uh
+        FROM SYSDBA.USER_HEALTH uh
         <where>
             <if test="userId != null">
-                AND uh.user_id = #{userId}
+                AND uh.USER_ID = #{userId}
             </if>
             <if test="healthModelConfigId != null">
-                AND uh.health_model_config_id = #{healthModelConfigId}
+                AND uh.HEALTH_MODEL_CONFIG_ID = #{healthModelConfigId}
             </if>
             <if test="startTime != null and endTime != null">
-                AND uh.create_time BETWEEN #{startTime} AND #{endTime}
+                AND uh.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
 

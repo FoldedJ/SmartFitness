@@ -4,127 +4,124 @@
 
     <!-- resultMap 用于定义结果集映射 -->
     <resultMap id="commentParentResultMap" type="cn.kmbeast.pojo.vo.CommentParentVO">
-        <id property="id" column="id"/>
-        <result property="userId" column="user_id"/>
-        <result property="userName" column="user_name"/>
-        <result property="userAvatar" column="user_avatar"/>
-        <result property="content" column="content"/>
-        <result property="upvoteList" column="upvoteList"/>
-        <result property="childTotal" column="childTotal"/>
+        <id property="id" column="ID"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="userAvatar" column="USER_AVATAR"/>
+        <result property="content" column="CONTENT"/>
+        <result property="upvoteList" column="UPVOTE_LIST"/>
+        <result property="childTotal" column="CHILD_TOTAL"/>
         <result property="createTime"
-                column="create_time"
+                column="CREATE_TIME"
                 javaType="java.time.LocalDateTime"
                 jdbcType="TIMESTAMP"/>
         <!-- 使用 collection 标签来映射一对多关系 -->
         <collection property="commentChildVOS"
                     ofType="cn.kmbeast.pojo.vo.CommentChildVO"
-                    column="id"
-                    foreignColumn="id"
+                    column="ID"
+                    foreignColumn="ID"
                     select="getChildCommentsByParentId"/>
     </resultMap>
 
     <update id="update">
-        UPDATE evaluations e
-        SET e.upvote_list = #{upvoteList}
-        WHERE e.id = #{id}
+        UPDATE SYSDBA.EVALUATIONS e
+        SET e.UPVOTE_LIST = #{upvoteList}
+        WHERE e.ID = #{id}
     </update>
 
     <!-- 查询父级评论 -->
     <select id="getParentComments" resultMap="commentParentResultMap">
-        SELECT e.id                                                            AS id,
-               e.content                                                       AS content,
-               e.upvote_list                                                   AS upvoteList,
-               e.create_time                                                   AS create_time,
-               u.id                                                            AS user_id,
-               u.user_name,
-               u.user_avatar,
-               (SELECT COUNT(*) FROM evaluations ev WHERE ev.parent_id = e.id) AS childTotal
-        FROM evaluations e
-                 LEFT JOIN user u ON u.id = e.commenter_id
-        WHERE e.content_id = #{contentId}
-          AND e.content_type = #{contentType}
-          AND e.parent_id IS NULL
-        ORDER BY id DESC
+        SELECT e.ID AS ID,
+               e.CONTENT AS CONTENT,
+               e.UPVOTE_LIST AS UPVOTE_LIST,
+               e.CREATE_TIME AS CREATE_TIME,
+               u.ID AS USER_ID,
+               u.USER_NAME,
+               u.USER_AVATAR,
+               (SELECT COUNT(*) FROM SYSDBA.EVALUATIONS ev WHERE ev.PARENT_ID = e.ID) AS CHILD_TOTAL
+        FROM SYSDBA.EVALUATIONS e
+                 LEFT JOIN SYSDBA."USER" u ON u.ID = e.COMMENTER_ID
+        WHERE e.CONTENT_ID = #{contentId}
+          AND e.CONTENT_TYPE = #{contentType}
+          AND e.PARENT_ID IS NULL
+        ORDER BY ID DESC
     </select>
 
     <!-- 根据父级评论ID查询子级评论 -->
     <select id="getChildCommentsByParentId"
             resultType="cn.kmbeast.pojo.vo.CommentChildVO"
             parameterType="Integer">
-        SELECT e.id           AS id,
-               e.content      AS content,
-               e.create_time  AS createTime,
-               e.parent_id    AS parentId,
-               e.upvote_list  AS upvoteList,
-               u.id           AS userId,
-               u.user_name    AS userName,
-               u.user_avatar  AS userAvatar,
-               u1.id          AS replierId,
-               u1.user_name   AS replierName,
-               u1.user_avatar AS replierAvatar
-        FROM evaluations e
-                 LEFT JOIN user u ON u.id = e.commenter_id
-                 LEFT JOIN user u1 ON u1.id = e.replier_id
-        WHERE e.parent_id = #{id}
-          AND e.parent_id IS NOT NULL
-        ORDER BY id DESC
+        SELECT e.ID AS ID,
+               e.CONTENT AS CONTENT,
+               e.CREATE_TIME AS CREATE_TIME,
+               e.PARENT_ID AS PARENT_ID,
+               e.UPVOTE_LIST AS UPVOTE_LIST,
+               u.ID AS USER_ID,
+               u.USER_NAME AS USER_NAME,
+               u.USER_AVATAR AS USER_AVATAR,
+               u1.ID AS REPLIER_ID,
+               u1.USER_NAME AS REPLIER_NAME,
+               u1.USER_AVATAR AS REPLIER_AVATAR
+        FROM SYSDBA.EVALUATIONS e
+                 LEFT JOIN SYSDBA."USER" u ON u.ID = e.COMMENTER_ID
+                 LEFT JOIN SYSDBA."USER" u1 ON u1.ID = e.REPLIER_ID
+        WHERE e.PARENT_ID = #{id}
+          AND e.PARENT_ID IS NOT NULL
+        ORDER BY ID DESC
     </select>
 
     <select id="query" resultType="cn.kmbeast.pojo.vo.CommentChildVO">
-
-        SELECT e.id AS id,
-        e.content AS content,
-        e.create_time AS createTime,
-        e.parent_id AS parentId,
-        e.upvote_list AS upvoteList,
-        e.content_type AS contentType,
-        u.id AS userId,
-        u.user_name AS userName,
-        u.user_avatar AS userAvatar,
-        u1.id AS replier_id,
-        u1.user_name AS replierName,
-        u1.user_avatar AS replierAvatar
-        FROM evaluations e
-        LEFT JOIN user u ON u.id = e.commenter_id
-        LEFT JOIN user u1 ON u1.id = e.replier_id
+        SELECT e.ID AS ID,
+               e.CONTENT AS CONTENT,
+               e.CREATE_TIME AS CREATE_TIME,
+               e.PARENT_ID AS PARENT_ID,
+               e.UPVOTE_LIST AS UPVOTE_LIST,
+               e.CONTENT_TYPE AS CONTENT_TYPE,
+               u.ID AS USER_ID,
+               u.USER_NAME AS USER_NAME,
+               u.USER_AVATAR AS USER_AVATAR,
+               u1.ID AS REPLIER_ID,
+               u1.USER_NAME AS REPLIER_NAME,
+               u1.USER_AVATAR AS REPLIER_AVATAR
+        FROM SYSDBA.EVALUATIONS e
+        LEFT JOIN SYSDBA."USER" u ON u.ID = e.COMMENTER_ID
+        LEFT JOIN SYSDBA."USER" u1 ON u1.ID = e.REPLIER_ID
         <where>
             <if test="contentType != null and contentType != ''">
-                AND e.content_type = #{contentType}
+                AND e.CONTENT_TYPE = #{contentType}
             </if>
             <if test="content != null and content != ''">
-                AND e.content like concat('%',#{content},'%')
+                AND e.CONTENT LIKE '%' || #{content} || '%'
             </if>
             <if test="startTime != null and endTime != null">
-                AND e.create_time BETWEEN #{startTime} AND #{endTime}
+                AND e.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
-        ORDER BY e.create_time DESC
+        ORDER BY e.CREATE_TIME DESC
         <if test="current != null and size != ''">
-            LIMIT #{current},#{size}
+            OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
         </if>
     </select>
 
     <select id="queryCount" resultType="integer">
-
         SELECT COUNT(*)
-        FROM evaluations e
+        FROM SYSDBA.EVALUATIONS e
         <where>
             <if test="contentType != null and contentType != ''">
-                AND e.content_type like concat('%',#{contentType},'%')
+                AND e.CONTENT_TYPE LIKE '%' || #{contentType} || '%'
             </if>
             <if test="content != null and content != ''">
-                AND e.content like concat('%',#{content},'%')
+                AND e.CONTENT LIKE '%' || #{content} || '%'
             </if>
             <if test="startTime != null and endTime != null">
-                AND e.create_time BETWEEN #{startTime} AND #{endTime}
+                AND e.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
-
     </select>
 
     <!--    批量删除笔记信息-->
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM evaluations WHERE id IN
+        DELETE FROM SYSDBA.EVALUATIONS WHERE ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -132,15 +129,15 @@
 
     <!--评论信息新增-->
     <insert id="save">
-        INSERT INTO evaluations(parent_id, commenter_id, replier_id, content_type, content_id, content,
-                                upvote_list, create_time)
+        INSERT INTO SYSDBA.EVALUATIONS(PARENT_ID, COMMENTER_ID, REPLIER_ID, CONTENT_TYPE, CONTENT_ID, CONTENT,
+                                UPVOTE_LIST, CREATE_TIME)
         VALUES (#{parentId}, #{commenterId}, #{replierId}, #{contentType}, #{contentId}, #{content},
                 #{upvoteList}, #{createTime})
     </insert>
 
     <!--    批量查询二级评论信息-->
     <select id="selectChildComments" parameterType="list" resultType="Integer">
-        SELECT e.id FROM evaluations e WHERE e.parentId IN
+        SELECT e.ID FROM SYSDBA.EVALUATIONS e WHERE e.PARENT_ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -149,9 +146,9 @@
     <!--查询指定内容的全部评论数目-->
     <select id="totalCount" resultType="java.lang.Integer">
         SELECT COUNT(*)
-        FROM evaluations e
-        WHERE e.content_id = #{contentId}
-          AND e.content_type = #{contentType}
+        FROM SYSDBA.EVALUATIONS e
+        WHERE e.CONTENT_ID = #{contentId}
+          AND e.CONTENT_TYPE = #{contentType}
     </select>
 
 </mapper>

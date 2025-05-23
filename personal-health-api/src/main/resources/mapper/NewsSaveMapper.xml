@@ -3,12 +3,12 @@
 <mapper namespace="cn.kmbeast.mapper.NewsSaveMapper">
 
     <insert id="save">
-        INSERT INTO news_save (user_id, news_id, create_time)
+        INSERT INTO SYSDBA.NEWS_SAVE (USER_ID, NEWS_ID, CREATE_TIME)
         VALUES (#{userId}, #{newsId}, #{createTime})
     </insert>
 
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM news_save WHERE id IN
+        DELETE FROM SYSDBA.NEWS_SAVE WHERE ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -17,40 +17,40 @@
     <select id="query" resultMap="BaseResultMap">
 
         SELECT ns.*,
-               u.user_name,
-               n.name,
-               n.cover,
-               n.create_time AS news_create_time,
-               n.content,
-               t.name AS tag_name
-        FROM news_save ns
-        LEFT JOIN user u ON u.id = ns.user_id
-        LEFT JOIN news n ON n.id = ns.news_id
-        LEFT JOIN tags t ON t.id = n.tag_id
+               u.USER_NAME,
+               n.NAME,
+               n.COVER,
+               n.CREATE_TIME AS NEWS_CREATE_TIME,
+               n.CONTENT,
+               t.NAME AS TAG_NAME
+        FROM SYSDBA.NEWS_SAVE ns
+        LEFT JOIN SYSDBA."USER" u ON u.ID = ns.USER_ID
+        LEFT JOIN SYSDBA.NEWS n ON n.ID = ns.NEWS_ID
+        LEFT JOIN SYSDBA.TAGS t ON t.ID = n.TAG_ID
         <where>
             <if test="userId != null">
-                AND ns.user_id = #{userId}
+                AND ns.USER_ID = #{userId}
             </if>
             <if test="newsId != null">
-                AND ns.news_id = #{newsId}
+                AND ns.NEWS_ID = #{newsId}
             </if>
         </where>
-        ORDER BY ns.create_time DESC
+        ORDER BY ns.CREATE_TIME DESC
         <if test="current != null and size != null">
-            LIMIT #{current},#{size}
+            OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
         </if>
     </select>
 
     <select id="queryCount" resultType="integer">
 
         SELECT COUNT(*)
-        FROM news_save ns
+        FROM SYSDBA.NEWS_SAVE ns
         <where>
             <if test="userId != null">
-                AND ns.user_id = #{userId}
+                AND ns.USER_ID = #{userId}
             </if>
             <if test="newsId != null">
-                AND ns.news_id = #{newsId}
+                AND ns.NEWS_ID = #{newsId}
             </if>
         </where>
 

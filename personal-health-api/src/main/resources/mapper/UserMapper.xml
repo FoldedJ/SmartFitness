@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.kmbeast.mapper.UserMapper">
     <insert id="insert" parameterType="cn.kmbeast.pojo.entity.User">
-        INSERT INTO user (user_account,
-                          user_name,
-                          user_pwd,
-                          user_avatar,
-                          user_email,
-                          user_role,
-                          is_login,
-                          is_word,
-                          create_time)
+        INSERT INTO SYSDBA."USER" (USER_ACCOUNT,
+                          USER_NAME,
+                          USER_PWD,
+                          USER_AVATAR,
+                          USER_EMAIL,
+                          USER_ROLE,
+                          IS_LOGIN,
+                          IS_WORD,
+                          CREATE_TIME)
         VALUES (#{userAccount},
                 #{userName},
                 #{userPwd},
@@ -22,39 +22,39 @@
                 #{createTime})
     </insert>
     <update id="update" parameterType="cn.kmbeast.pojo.entity.User">
-        UPDATE user
+        UPDATE SYSDBA."USER"
         <set>
             <if test="userAccount != null">
-                user_account = #{userAccount},
+                USER_ACCOUNT = #{userAccount},
             </if>
             <if test="userName != null">
-                user_name = #{userName},
+                USER_NAME = #{userName},
             </if>
             <if test="userPwd != null">
-                user_pwd = #{userPwd},
+                USER_PWD = #{userPwd},
             </if>
             <if test="userAvatar != null">
-                user_avatar = #{userAvatar},
+                USER_AVATAR = #{userAvatar},
             </if>
             <if test="userEmail != null">
-                user_email = #{userEmail},
+                USER_EMAIL = #{userEmail},
             </if>
             <if test="isLogin != null">
-                is_login = #{isLogin},
+                IS_LOGIN = #{isLogin},
             </if>
             <if test="isWord != null">
-                is_word = #{isWord},
+                IS_WORD = #{isWord},
             </if>
             <if test="userRole != null">
-                user_role = #{userRole},
+                USER_ROLE = #{userRole},
             </if>
         </set>
-        WHERE id = #{id}
+        WHERE ID = #{id}
 
     </update>
 
     <delete id="batchDelete" parameterType="list">
-        DELETE FROM user WHERE id IN
+        DELETE FROM SYSDBA."USER" WHERE ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -62,17 +62,17 @@
 
     <select id="getByActive" resultMap="BaseResultMap">
         SELECT u.*
-        FROM user u
+        FROM SYSDBA."USER" u
         <where>
             1 = 1
             <if test="id != null">
-                AND u.id = #{id}
+                AND u.ID = #{id}
             </if>
             <if test="userName != null and userName != ''">
-                AND u.user_name = #{userName}
+                AND u.USER_NAME = #{userName}
             </if>
             <if test="userAccount != null and userAccount != ''">
-                AND u.user_account = #{userAccount}
+                AND u.USER_ACCOUNT = #{userAccount}
             </if>
         </where>
 
@@ -82,33 +82,33 @@
     <select id="query" resultMap="BaseResultMap">
 
         SELECT u.*
-        FROM user u
+        FROM SYSDBA."USER" u
         <where>
             <if test="userAccount != null and userAccount != ''">
-                AND u.user_account LIKE concat('%',#{userAccount},'%')
+                AND u.USER_ACCOUNT LIKE '%' || #{userAccount} || '%'
             </if>
             <if test="userName != null and userName != ''">
-                AND u.user_name LIKE concat('%',#{userName},'%')
+                AND u.USER_NAME LIKE '%' || #{userName} || '%'
             </if>
             <if test="userEmail != null and userEmail != ''">
-                AND u.user_email LIKE concat('%',#{userEmail},'%')
+                AND u.USER_EMAIL LIKE '%' || #{userEmail} || '%'
             </if>
             <if test="role != null">
-                AND u.role = #{role}
+                AND u.ROLE = #{role}
             </if>
             <if test="isLogin != null">
-                AND u.is_login = #{isLogin}
+                AND u.IS_LOGIN = #{isLogin}
             </if>
             <if test="isWord != null">
-                AND u.is_word = #{isWord}
+                AND u.IS_WORD = #{isWord}
             </if>
             <if test="startTime != null and endTime != null">
-                AND u.create_time BETWEEN #{startTime} AND #{endTime}
+                AND u.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
-        ORDER BY u.id DESC
+        ORDER BY u.ID DESC
         <if test="current != null and size != null">
-            LIMIT #{current},#{size}
+            OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
         </if>
     </select>
 
@@ -116,28 +116,28 @@
     <select id="queryCount" resultType="integer">
 
         SELECT COUNT(*)
-        FROM user u
+        FROM SYSDBA."USER" u
         <where>
             <if test="userAccount != null and userAccount != ''">
-                AND u.user_account LIKE concat('%',#{userAccount},'%')
+                AND u.USER_ACCOUNT LIKE '%' || #{userAccount} || '%'
             </if>
             <if test="userName != null and userName != ''">
-                AND u.user_name LIKE concat('%',#{userName},'%')
+                AND u.USER_NAME LIKE '%' || #{userName} || '%'
             </if>
             <if test="userEmail != null and userEmail != ''">
-                AND u.user_email LIKE concat('%',#{userEmail},'%')
+                AND u.USER_EMAIL LIKE '%' || #{userEmail} || '%'
             </if>
             <if test="role != null">
-                AND u.role = #{role}
+                AND u.ROLE = #{role}
             </if>
             <if test="isLogin != null">
-                AND u.is_login = #{isLogin}
+                AND u.IS_LOGIN = #{isLogin}
             </if>
             <if test="isWord != null">
-                AND u.is_word = #{isWord}
+                AND u.IS_WORD = #{isWord}
             </if>
             <if test="startTime != null and endTime != null">
-                AND u.create_time BETWEEN #{startTime} AND #{endTime}
+                AND u.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
 
