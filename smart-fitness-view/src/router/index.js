@@ -143,6 +143,15 @@ const routes = [
         },
         isHidden: true,
       },
+      {
+        name: '发布资讯',
+        path: "/publish-news",
+        component: () => import(`@/views/user/PublishNews.vue`),
+        meta: {
+          requireAuth: true,
+        },
+        isHidden: true,
+      },
     ]
   }
 ];

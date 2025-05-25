@@ -13,4 +13,14 @@ public class NewsVO extends News {
      */
     private String tagName;
 
+    /**
+     * 发布者ID
+     */
+    private Integer publisher;
+
+    /**
+     * 发布者名称
+     */
+    private String publisherName;
+
 }

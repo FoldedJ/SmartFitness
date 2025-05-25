@@ -31,7 +31,7 @@ public class News {
      */
     private String cover;
     /**
-     * 阅读者的ID列表，以“,”进行分割
+     * 阅读者的ID列表，以"，"进行分割
      */
     private String readerIds;
     /**
@@ -43,4 +43,9 @@ public class News {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+    
+    /**
+     * 发布者ID
+     */
+    private Integer publisher;
 }

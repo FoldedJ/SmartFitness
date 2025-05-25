@@ -8,6 +8,7 @@
                         style="font-size: 12px;background-color: rgb(250, 250, 250);padding: 16px 6px;border-radius: 5px;">
                         <span class="news-tags">{{ newsInfo.tagName }}</span>
                         <span style="margin-left: 10px;">{{ parseTime(newsInfo.createTime) }}</span>
+                        <span style="margin-left: 10px;">发布者：{{ newsInfo.publisherName }}</span>
                         <el-button style="margin-left: 20px;" @click="saveNewsOperation" class="customer" size="mini">{{
                             !saveFlag ?
                                 '立即收藏' : '取消收藏' }}</el-button>

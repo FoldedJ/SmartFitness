@@ -3,8 +3,8 @@
 <mapper namespace="cn.foldedj.mapper.NewsMapper">
 
     <insert id="save">
-        INSERT INTO SYSDBA.NEWS (NAME, CONTENT, TAG_ID, COVER, READER_IDS, IS_TOP, CREATE_TIME)
-        VALUES (#{name}, #{content}, #{tagId}, #{cover}, #{readerIds}, #{isTop}, #{createTime})
+        INSERT INTO SYSDBA.NEWS (NAME, CONTENT, TAG_ID, COVER, READER_IDS, IS_TOP, CREATE_TIME, PUBLISHER)
+        VALUES (#{name}, #{content}, #{tagId}, #{cover}, #{readerIds}, #{isTop}, #{createTime}, #{publisher})
     </insert>
 
     <update id="update">
@@ -28,6 +28,9 @@
             <if test="isTop != null">
                 IS_TOP = #{isTop},
             </if>
+            <if test="publisher != null">
+                PUBLISHER = #{publisher},
+            </if>
         </set>
         WHERE ID = #{id}
     </update>
@@ -40,9 +43,10 @@
     </delete>
 
     <select id="query" resultMap="BaseResultMap">
-        SELECT n.*,t.NAME AS TAG_NAME
+        SELECT n.*, t.NAME AS TAG_NAME, u.USER_NAME AS PUBLISHER_NAME
         FROM SYSDBA.NEWS n
         LEFT JOIN SYSDBA.TAGS t ON t.ID = n.TAG_ID
+        LEFT JOIN SYSDBA."USER" u ON u.ID = n.PUBLISHER
         <where>
             <if test="name != null and name != ''">
                 AND n.NAME LIKE '%' || #{name} || '%'
@@ -52,6 +56,9 @@
             </if>
             <if test="isTop != null">
                 AND n.IS_TOP = #{isTop}
+            </if>
+            <if test="publisher != null">
+                AND n.PUBLISHER = #{publisher}
             </if>
             <if test="startTime != null and endTime != null">
                 AND n.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
@@ -93,6 +100,8 @@
         <result column="IS_TOP" property="isTop"/>
         <result column="CREATE_TIME" property="createTime"/>
         <result column="TAG_NAME" property="tagName"/>
+        <result column="PUBLISHER" property="publisher"/>
+        <result column="PUBLISHER_NAME" property="publisherName"/>
     </resultMap>
 
 </mapper>

@@ -26,13 +26,19 @@
                     </el-col>
                 </el-row>
             </li>
-            <li style="position: absolute;right: 350px;cursor: pointer;">
+            <li style="position: absolute;right: 450px;cursor: pointer;">
                 <span @click="healthDataRecord" style="margin:14px 10px;">
                     <i class="el-icon-upload"></i>
                     指标记录
                 </span>
             </li>
-            <li style="position: absolute;right: 320px;">
+            <li style="position: absolute;right: 365px;cursor: pointer;">
+                <span @click="publishNews" style="margin:14px 10px;">
+                    <i class="el-icon-edit-outline"></i>
+                    发布
+                </span>
+            </li>
+            <li style="position: absolute;right: 310px;">
                 <el-badge style="margin-left: 5px;font-size: 16px;" v-if="noReadMsg !== 0" :value="noReadMsg">
                     <span class="message-span" @click="messageCenter">
                         <i class="el-icon-bell"></i>
@@ -130,9 +136,9 @@ export default {
         healthDataRecord() {
             this.$emit('eventListener', 'healthDataRecord');
         },
-        // 退出登录，传回父组件处理
-        loginOut() {
-            this.$emit('eventListener', 'loginOut');
+        // 发布资讯，传回父组件处理
+        publishNews() {
+            this.$router.push('/publish-news');
         },
         async loadMsgCount() {
             const userInfo = sessionStorage.getItem('userInfo');
@@ -248,7 +254,6 @@ export default {
         .serch-input:focus {
             border: 1px solid rgb(188, 229, 247);
         }
-
     }
 }
 
@@ -282,7 +287,6 @@ export default {
             font-size: 12px;
             padding: 0 8px;
         }
-
     }
 
     i {

@@ -20,5 +20,14 @@ public class NewsQueryDto extends QueryDto {
      * 是否推荐
      */
     private Boolean isTop;
+    
+    /**
+     * 发布者ID
+     */
+    private Integer publisher;
+    
+    /**
+     * 开始时间
+     */
 
 }

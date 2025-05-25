@@ -1,6 +1,7 @@
 package cn.foldedj.controller;
 
 import cn.foldedj.aop.Pager;
+import cn.foldedj.context.LocalThreadHolder;
 import cn.foldedj.pojo.api.Result;
 import cn.foldedj.pojo.dto.query.extend.NewsQueryDto;
 import cn.foldedj.pojo.entity.News;
@@ -29,6 +30,8 @@ public class NewsController {
      */
     @PostMapping(value = "/save")
     public Result<Void> save(@RequestBody News news) {
+        // 设置发布者ID为当前登录用户
+        news.setPublisher(LocalThreadHolder.getUserId());
         return newsService.save(news);
     }
 
