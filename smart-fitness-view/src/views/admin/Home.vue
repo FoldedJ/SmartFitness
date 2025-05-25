@@ -27,7 +27,7 @@
                     <p style="font-size: 12px;padding: 3px 0;margin-bottom: 10px;">
                         <span class="modelName">*头像</span>
                     </p>
-                    <el-upload class="avatar-uploader" action="http://localhost:21090/api/personal-heath/v1.0/file/upload"
+                    <el-upload class="avatar-uploader" action="http://localhost:21090/api/smart-fitness/v1.0/file/upload"
                         :show-file-list="false" :on-success="handleAvatarSuccess">
                         <img v-if="userInfo.url" :src="userInfo.url" style="width: 80px;height: 80px;">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>

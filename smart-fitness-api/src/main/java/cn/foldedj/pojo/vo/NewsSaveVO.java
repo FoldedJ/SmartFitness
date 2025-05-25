@@ -37,4 +37,13 @@ public class NewsSaveVO extends NewsSave {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime newsCreateTime;
 
+    /**
+     * 浏览次数
+     */
+    private Integer viewsNumber;
+
+    /**
+     * 资讯ID
+     */
+    private Integer newsId;
 }

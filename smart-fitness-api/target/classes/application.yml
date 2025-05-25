@@ -2,10 +2,10 @@
 server:
   port: 21090
   servlet:
-    context-path: /api/personal-heath/v1.0
+    context-path: /api/smart-fitness/v1.0
 # API地址前缀，用于接口拦截放行
 my-server:
-  api-context-path: /api/personal-heath/v1.0
+  api-context-path: /api/smart-fitness/v1.0
 #MySQL与文件上传限制配置
 spring:
   servlet:

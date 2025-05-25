@@ -50,7 +50,7 @@
                 <p>*图标</p>
                 <!-- 图标 -->
                 <el-row style="margin-top: 10px;">
-                    <el-upload class="avatar-uploader" action="http://localhost:21090/api/personal-heath/v1.0/file/upload"
+                    <el-upload class="avatar-uploader" action="http://localhost:21090/api/smart-fitness/v1.0/file/upload"
                         :show-file-list="false" :on-success="handleAvatarSuccess">
                         <img v-if="data.cover" :src="data.cover" style="height: 64px;width: 64px;">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>

@@ -11,7 +11,7 @@
                     <div style="font-size: 12px;">
                         <span class="news-tags">{{ news.tagName }}</span>
                         <span style="margin-left: 10px;">收藏于 {{ parseTime(news.createTime) }}</span>
-                        <span style="margin-left: 10px;"><i class="el-icon-view"></i> {{ news.viewsNumber || 0 }}</span>
+                        <span style="margin-left: 10px;"><i class="el-icon-view"></i> {{ news.viewsNumber }}</span>
                     </div>
                 </div>
             </el-col>
@@ -35,7 +35,12 @@ export default {
             return timeAgo(time);
         },
         newsItemClick(news) {
-            sessionStorage.setItem('newsInfo', JSON.stringify(news));
+            // 确保news对象包含id字段
+            const newsInfo = {
+                ...news,
+                id: news.newsId
+            };
+            sessionStorage.setItem('newsInfo', JSON.stringify(newsInfo));
             this.$router.push('/news-detail');
         },
         loadAllSaveNews() {

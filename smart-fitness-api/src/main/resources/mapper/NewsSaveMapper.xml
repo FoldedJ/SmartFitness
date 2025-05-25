@@ -18,10 +18,12 @@
 
         SELECT ns.*,
                u.USER_NAME,
+               n.ID AS NEWS_ID,
                n.NAME,
                n.COVER,
                n.CREATE_TIME AS NEWS_CREATE_TIME,
                n.CONTENT,
+               n.VIEWS_NUMBER,
                t.NAME AS TAG_NAME
         FROM SYSDBA.NEWS_SAVE ns
         LEFT JOIN SYSDBA."USER" u ON u.ID = ns.USER_ID
@@ -68,6 +70,7 @@
         <result column="CONTENT" property="content"/>
         <result column="TAG_NAME" property="tagName"/>
         <result column="NEWS_CREATE_TIME" property="newsCreateTime"/>
+        <result column="VIEWS_NUMBER" property="viewsNumber"/>
     </resultMap>
 
 </mapper>

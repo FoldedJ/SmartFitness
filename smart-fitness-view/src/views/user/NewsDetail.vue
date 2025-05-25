@@ -99,6 +99,7 @@ export default {
         newsItemClick(news) {
             this.newsInfo = news;
             this.loadSaveStatus();
+            this.increaseViews();
         },
         // 转换时间
         parseTime(time) {

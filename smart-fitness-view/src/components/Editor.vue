@@ -31,7 +31,7 @@ export default Vue.extend({
                 placeholder: '请输入内容...',
                 MENU_CONF: {
                     uploadImage: {
-                        server: 'http://localhost:21090/api/personal-heath/v1.0/file/upload',
+                        server: 'http://localhost:21090/api/smart-fitness/v1.0/file/upload',
                         fieldName: 'file',
                         maxFileSize: 10 * 1024 * 1024,
                         maxNumberOfFiles: 10,
