@@ -3,8 +3,8 @@
 <mapper namespace="cn.foldedj.mapper.NewsMapper">
 
     <insert id="save">
-        INSERT INTO SYSDBA.NEWS (NAME, CONTENT, TAG_ID, COVER, READER_IDS, IS_TOP, CREATE_TIME, PUBLISHER)
-        VALUES (#{name}, #{content}, #{tagId}, #{cover}, #{readerIds}, #{isTop}, #{createTime}, #{publisher})
+        INSERT INTO SYSDBA.NEWS (NAME, CONTENT, TAG_ID, COVER, VIEWS_NUMBER, IS_TOP, CREATE_TIME, PUBLISHER)
+        VALUES (#{name}, #{content}, #{tagId}, #{cover}, #{viewsNumber}, #{isTop}, #{createTime}, #{publisher})
     </insert>
 
     <update id="update">
@@ -22,8 +22,8 @@
             <if test="cover != null and cover != ''">
                 COVER = #{cover},
             </if>
-            <if test="readerIds != null and readerIds != ''">
-                READER_IDS = #{readerIds},
+            <if test="viewsNumber != null">
+                VIEWS_NUMBER = #{viewsNumber},
             </if>
             <if test="isTop != null">
                 IS_TOP = #{isTop},
@@ -41,6 +41,20 @@
             #{id}
         </foreach>
     </delete>
+
+    <update id="increaseViews">
+        UPDATE SYSDBA.NEWS
+        SET VIEWS_NUMBER = NVL(VIEWS_NUMBER, 0) + 1
+        WHERE ID = #{id}
+    </update>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT n.*, t.NAME AS TAG_NAME, u.USER_NAME AS PUBLISHER_NAME
+        FROM SYSDBA.NEWS n
+        LEFT JOIN SYSDBA.TAGS t ON t.ID = n.TAG_ID
+        LEFT JOIN SYSDBA."USER" u ON u.ID = n.PUBLISHER
+        WHERE n.ID = #{id}
+    </select>
 
     <select id="query" resultMap="BaseResultMap">
         SELECT n.*, t.NAME AS TAG_NAME, u.USER_NAME AS PUBLISHER_NAME
@@ -96,7 +110,7 @@
         <result column="CONTENT" property="content"/>
         <result column="TAG_ID" property="tagId"/>
         <result column="COVER" property="cover"/>
-        <result column="READER_IDS" property="readerIds"/>
+        <result column="VIEWS_NUMBER" property="viewsNumber"/>
         <result column="IS_TOP" property="isTop"/>
         <result column="CREATE_TIME" property="createTime"/>
         <result column="TAG_NAME" property="tagName"/>

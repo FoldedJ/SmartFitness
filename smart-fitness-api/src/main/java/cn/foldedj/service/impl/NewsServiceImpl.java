@@ -73,5 +73,24 @@ public class NewsServiceImpl implements NewsService {
         return PageResult.success(NewsList, totalCount);
     }
 
-
+    /**
+     * 增加资讯浏览次数
+     *
+     * @param id 资讯ID
+     * @return Result<Integer> 返回更新后的浏览次数
+     */
+    @Override
+    public Result<Integer> increaseViews(Integer id) {
+        newsMapper.increaseViews(id);
+        NewsQueryDto queryDto = new NewsQueryDto();
+        News news = newsMapper.getById(id);
+        if (news != null) {
+            queryDto.setName(news.getName());
+            List<NewsVO> newsList = newsMapper.query(queryDto);
+            if (newsList != null && !newsList.isEmpty()) {
+                return ApiResult.success(newsList.get(0).getViewsNumber());
+            }
+        }
+        return ApiResult.error("获取新闻信息失败");
+    }
 }

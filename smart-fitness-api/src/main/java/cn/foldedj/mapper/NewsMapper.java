@@ -24,4 +24,19 @@ public interface NewsMapper {
 
     Integer queryCount(NewsQueryDto newsQueryDto);
 
+    /**
+     * 增加资讯浏览次数
+     *
+     * @param id 资讯ID
+     */
+    void increaseViews(@Param("id") Integer id);
+
+    /**
+     * 根据ID获取资讯
+     *
+     * @param id 资讯ID
+     * @return News 资讯实体
+     */
+    News getById(@Param("id") Integer id);
+
 }

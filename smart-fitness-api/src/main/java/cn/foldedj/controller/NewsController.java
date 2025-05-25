@@ -69,4 +69,15 @@ public class NewsController {
         return newsService.query(NewsQueryDto);
     }
 
+    /**
+     * 增加资讯浏览次数
+     *
+     * @param news 包含ID的资讯对象
+     * @return Result<Integer> 返回更新后的浏览次数
+     */
+    @PostMapping(value = "/increaseViews")
+    public Result<Integer> increaseViews(@RequestBody News news) {
+        return newsService.increaseViews(news.getId());
+    }
+
 }

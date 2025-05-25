@@ -11,6 +11,7 @@
                 <div style="font-size: 12px;">
                     <span class="news-tags">{{ news.tagName }}</span>
                     <span style="margin-left: 10px;">收藏于 {{ parseTime(news.createTime) }}</span>
+                    <span style="margin-left: 10px;"><i class="el-icon-view"></i> {{ news.viewsNumber || 0 }}</span>
                 </div>
             </el-col>
         </el-row>

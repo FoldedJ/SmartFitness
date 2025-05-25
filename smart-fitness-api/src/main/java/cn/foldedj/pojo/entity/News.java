@@ -31,9 +31,9 @@ public class News {
      */
     private String cover;
     /**
-     * 阅读者的ID列表，以"，"进行分割
+     * 浏览次数
      */
-    private String readerIds;
+    private Integer viewsNumber;
     /**
      * 是否推荐
      */

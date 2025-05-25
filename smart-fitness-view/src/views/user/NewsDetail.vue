@@ -9,6 +9,7 @@
                         <span class="news-tags">{{ newsInfo.tagName }}</span>
                         <span style="margin-left: 10px;">{{ parseTime(newsInfo.createTime) }}</span>
                         <span style="margin-left: 10px;">发布者：{{ newsInfo.publisherName }}</span>
+                        <span style="margin-left: 10px;"><i class="el-icon-view"></i> {{ newsInfo.viewsNumber || 0 }}</span>
                         <el-button style="margin-left: 20px;" @click="saveNewsOperation" class="customer" size="mini">{{
                             !saveFlag ?
                                 '立即收藏' : '取消收藏' }}</el-button>
@@ -55,6 +56,24 @@ export default {
         this.loadAllTopNews();
     },
     methods: {
+        getStorageInfo() {
+            const newInfo = sessionStorage.getItem('newsInfo');
+            this.newsInfo = JSON.parse(newInfo);
+            this.loadSaveStatus();
+            // 在获取到newsInfo后增加浏览量
+            this.increaseViews();
+        },
+        // 增加浏览次数
+        increaseViews() {
+            if (this.newsInfo && this.newsInfo.id) {
+                this.$axios.post('/news/increaseViews', { id: this.newsInfo.id }).then(response => {
+                    const { data } = response;
+                    if (data.code === 200) {
+                        this.newsInfo.viewsNumber = data.data;
+                    }
+                });
+            }
+        },
         loadSaveStatus() {
             const newsSaveQueryDto = {
                 newsId: this.newsInfo.id
@@ -84,11 +103,6 @@ export default {
         // 转换时间
         parseTime(time) {
             return timeAgo(time);
-        },
-        getStorageInfo() {
-            const newInfo = sessionStorage.getItem('newsInfo');
-            this.newsInfo = JSON.parse(newInfo);
-            this.loadSaveStatus();
         },
         // 查询推荐资讯
         loadAllTopNews() {

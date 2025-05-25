@@ -20,4 +20,12 @@ public interface NewsService {
 
     Result<List<NewsVO>> query(NewsQueryDto newsQueryDto);
 
+    /**
+     * 增加资讯浏览次数
+     *
+     * @param id 资讯ID
+     * @return Result<Integer> 返回更新后的浏览次数
+     */
+    Result<Integer> increaseViews(Integer id);
+
 }
