@@ -50,35 +50,46 @@ export default {
             newsSaveList: []
         }
     },
+    beforeRouteEnter(to, from, next) {
+        const newsInfo = sessionStorage.getItem('newsInfo');
+        if (!newsInfo) {
+            next('/');
+            return;
+        }
+        next(vm => {
+            vm.newsInfo = JSON.parse(newsInfo);
+            vm.loadSaveStatus();
+            vm.increaseViews();
+        });
+    },
     created() {
-        // 第一件事：是不是拿到存起来的资讯数据？
-        this.getStorageInfo();
         this.loadAllTopNews();
     },
     methods: {
-        getStorageInfo() {
-            const newInfo = sessionStorage.getItem('newsInfo');
-            this.newsInfo = JSON.parse(newInfo);
-            this.loadSaveStatus();
-            // 在获取到newsInfo后增加浏览量
-            this.increaseViews();
-        },
         // 增加浏览次数
         increaseViews() {
-            if (this.newsInfo && this.newsInfo.id) {
-                this.$axios.post('/news/increaseViews', { id: this.newsInfo.id }).then(response => {
-                    const { data } = response;
-                    if (data.code === 200) {
-                        this.newsInfo.viewsNumber = data.data;
-                    }
-                });
-            }
+            if (!this.newsInfo || !this.newsInfo.id) return;
+            
+            // 使用localStorage记录已浏览的文章
+            const viewedArticles = JSON.parse(localStorage.getItem('viewedArticles') || '[]');
+            if (viewedArticles.includes(this.newsInfo.id)) return;
+            
+            this.$axios.post('/news/increaseViews', { id: this.newsInfo.id }).then(response => {
+                const { data } = response;
+                if (data.code === 200) {
+                    this.newsInfo.viewsNumber = data.data;
+                    // 记录已浏览的文章
+                    viewedArticles.push(this.newsInfo.id);
+                    localStorage.setItem('viewedArticles', JSON.stringify(viewedArticles));
+                }
+            });
         },
         loadSaveStatus() {
+            if (!this.newsInfo || !this.newsInfo.id) return;
+            
             const newsSaveQueryDto = {
                 newsId: this.newsInfo.id
             }
-            console.log("查询的参数：" + JSON.stringify(newsSaveQueryDto));
             this.$axios.post('/news-save/queryUser', newsSaveQueryDto).then(response => {
                 const { data } = response;
                 if (data.code === 200) {
@@ -88,6 +99,8 @@ export default {
         },
         // 收藏或取消收藏操作
         saveNewsOperation() {
+            if (!this.newsInfo || !this.newsInfo.id) return;
+            
             this.$axios.post('/news-save/operation', { newsId: this.newsInfo.id }).then(response => {
                 const { data } = response;
                 if (data.code === 200) {
@@ -97,9 +110,10 @@ export default {
             })
         },
         newsItemClick(news) {
-            this.newsInfo = news;
-            this.loadSaveStatus();
-            this.increaseViews();
+            // 更新sessionStorage中的资讯信息
+            sessionStorage.setItem('newsInfo', JSON.stringify(news));
+            // 重新加载页面以确保所有状态都被正确重置
+            this.$router.go(0);
         },
         // 转换时间
         parseTime(time) {
