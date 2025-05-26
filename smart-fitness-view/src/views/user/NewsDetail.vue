@@ -59,7 +59,12 @@ export default {
         next(vm => {
             vm.newsInfo = JSON.parse(newsInfo);
             vm.loadSaveStatus();
-            vm.increaseViews(); // 在路由进入时增加浏览量
+            // 使用 sessionStorage 来防止重复增加浏览量
+            const viewedKey = `viewed_${vm.newsInfo.id}`;
+            if (!sessionStorage.getItem(viewedKey)) {
+                vm.increaseViews();
+                sessionStorage.setItem(viewedKey, 'true');
+            }
         });
     },
     created() {
