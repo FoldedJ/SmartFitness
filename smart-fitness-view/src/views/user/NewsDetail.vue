@@ -47,8 +47,7 @@ export default {
             newsInfo: {},
             newsTopList: [],
             saveFlag: false,
-            newsSaveList: [],
-            hasIncreasedViews: false
+            newsSaveList: []
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -61,28 +60,7 @@ export default {
             vm.newsInfo = JSON.parse(newsInfo);
             vm.loadSaveStatus();
             vm.increaseViews();
-            vm.hasIncreasedViews = true;
         });
-    },
-    beforeRouteUpdate(to, from, next) {
-        // 如果是刷新操作，保持当前页面
-        if (to.path === from.path) {
-            next();
-            return;
-        }
-        const newsInfo = sessionStorage.getItem('newsInfo');
-        if (!newsInfo) {
-            next('/');
-            return;
-        }
-        this.newsInfo = JSON.parse(newsInfo);
-        this.loadSaveStatus();
-        // 只有在非刷新操作时才增加浏览量
-        if (!this.hasIncreasedViews) {
-            this.increaseViews();
-            this.hasIncreasedViews = true;
-        }
-        next();
     },
     created() {
         this.loadAllTopNews();
@@ -92,10 +70,17 @@ export default {
         increaseViews() {
             if (!this.newsInfo || !this.newsInfo.id) return;
             
+            // 使用localStorage记录已浏览的文章
+            const viewedArticles = JSON.parse(localStorage.getItem('viewedArticles') || '[]');
+            if (viewedArticles.includes(this.newsInfo.id)) return;
+            
             this.$axios.post('/news/increaseViews', { id: this.newsInfo.id }).then(response => {
                 const { data } = response;
                 if (data.code === 200) {
                     this.newsInfo.viewsNumber = data.data;
+                    // 记录已浏览的文章
+                    viewedArticles.push(this.newsInfo.id);
+                    localStorage.setItem('viewedArticles', JSON.stringify(viewedArticles));
                 }
             });
         },
