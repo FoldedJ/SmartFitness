@@ -38,7 +38,7 @@ export default {
             // 确保news对象包含id字段
             const newsInfo = {
                 ...news,
-                id: news.newsId
+                id: news.id || news.newsId // 兼容两种ID字段名
             };
             sessionStorage.setItem('newsInfo', JSON.stringify(newsInfo));
             this.$router.push('/news-detail');
