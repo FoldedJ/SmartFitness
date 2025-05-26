@@ -48,6 +48,13 @@
                 </el-table-column>
                 <el-table-column prop="createTime" width="168" label="发布时间"></el-table-column>
                 <el-table-column prop="name" label="标题"></el-table-column>
+                <el-table-column prop="viewsNumber" width="100" label="浏览量">
+                    <template slot-scope="scope">
+                        <span><i class="el-icon-view" style="margin-right: 3px;"></i>
+                            {{ scope.row.viewsNumber || 0 }}
+                        </span>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作" width="120">
                     <template slot-scope="scope">
                         <span class="text-button" @click="handleEdit(scope.row)">编辑</span>
@@ -111,7 +118,7 @@
                     style="background-color: rgb(96, 98, 102);color: rgb(247,248,249);border: none;" class="customer"
                     type="info" @click="updateOperation()">修改</el-button>
                 <el-button class="customer" size="small" style="background-color: rgb(241, 241, 241);border: none;"
-                    @click="dialogUserOperaion = false">取消</el-button>
+                    @click="handleCancel">取消</el-button>
             </span>
         </el-dialog>
     </el-row>
@@ -254,11 +261,24 @@ export default {
                 this.$message.error('提交失败，请稍后再试！');
             }
         },
+        handleCancel() {
+            this.dialogUserOperaion = false;
+            this.isOperation = false;
+            this.clearFormData();
+        },
         closeDialog() {
             this.dialogUserOperaion = false;
+            this.isOperation = false;
+            this.clearFormData();
         },
         clearFormData() {
-            this.data = {};
+            this.data = {
+                cover: '',
+                name: '',
+                tagId: '',
+                isTop: false,
+                content: ''
+            };
         },
         async fetchFreshData() {
             try {

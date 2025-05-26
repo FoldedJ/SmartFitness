@@ -62,7 +62,7 @@ export default {
             // 使用时间戳来确保每次访问都能增加浏览量
             const lastViewTime = sessionStorage.getItem(`lastView_${vm.newsInfo.id}`);
             const currentTime = new Date().getTime();
-            // 如果距离上次访问超过30秒，则增加浏览量
+            // 如果距离上次访问超过5秒，则增加浏览量
             if (!lastViewTime || (currentTime - parseInt(lastViewTime)) > 5000) {
                 vm.increaseViews();
                 sessionStorage.setItem(`lastView_${vm.newsInfo.id}`, currentTime.toString());
