@@ -59,7 +59,7 @@ export default {
         next(vm => {
             vm.newsInfo = JSON.parse(newsInfo);
             vm.loadSaveStatus();
-            vm.increaseViews();
+            vm.increaseViews(); // 在路由进入时增加浏览量
         });
     },
     created() {
@@ -70,17 +70,10 @@ export default {
         increaseViews() {
             if (!this.newsInfo || !this.newsInfo.id) return;
             
-            // 使用localStorage记录已浏览的文章
-            const viewedArticles = JSON.parse(localStorage.getItem('viewedArticles') || '[]');
-            if (viewedArticles.includes(this.newsInfo.id)) return;
-            
             this.$axios.post('/news/increaseViews', { id: this.newsInfo.id }).then(response => {
                 const { data } = response;
                 if (data.code === 200) {
                     this.newsInfo.viewsNumber = data.data;
-                    // 记录已浏览的文章
-                    viewedArticles.push(this.newsInfo.id);
-                    localStorage.setItem('viewedArticles', JSON.stringify(viewedArticles));
                 }
             });
         },
@@ -128,7 +121,7 @@ export default {
                     this.newsTopList = data.data;
                 }
             })
-        },
+        }
     }
 };
 </script>
@@ -137,7 +130,6 @@ export default {
 .news-tags {
     display: inline-block;
     padding: 4px 10px;
-    //background-color: rgb(226, 242, 249);
     color: #1d3cc4;
     border-radius: 3px;
 }
