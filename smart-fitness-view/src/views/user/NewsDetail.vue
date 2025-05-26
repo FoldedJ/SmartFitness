@@ -59,11 +59,13 @@ export default {
         next(vm => {
             vm.newsInfo = JSON.parse(newsInfo);
             vm.loadSaveStatus();
-            // 使用 sessionStorage 来防止重复增加浏览量
-            const viewedKey = `viewed_${vm.newsInfo.id}`;
-            if (!sessionStorage.getItem(viewedKey)) {
+            // 使用时间戳来确保每次访问都能增加浏览量
+            const lastViewTime = sessionStorage.getItem(`lastView_${vm.newsInfo.id}`);
+            const currentTime = new Date().getTime();
+            // 如果距离上次访问超过30秒，则增加浏览量
+            if (!lastViewTime || (currentTime - parseInt(lastViewTime)) > 5000) {
                 vm.increaseViews();
-                sessionStorage.setItem(viewedKey, 'true');
+                sessionStorage.setItem(`lastView_${vm.newsInfo.id}`, currentTime.toString());
             }
         });
     },
@@ -108,6 +110,10 @@ export default {
             })
         },
         newsItemClick(news) {
+            // 清除之前文章的浏览记录
+            if (this.newsInfo && this.newsInfo.id) {
+                sessionStorage.removeItem(`lastView_${this.newsInfo.id}`);
+            }
             // 更新sessionStorage中的资讯信息
             sessionStorage.setItem('newsInfo', JSON.stringify(news));
             // 重新加载页面以确保所有状态都被正确重置
