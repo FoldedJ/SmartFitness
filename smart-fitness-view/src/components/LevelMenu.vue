@@ -83,7 +83,7 @@ export default {
             messagePath: '/message',
             loginPath: '/login',
             sysName: '小绿书',
-            defaultPath: '/news-record',
+            defaultPath: '/home',
             filterText: '',
             noReadMsg: 0,
         }

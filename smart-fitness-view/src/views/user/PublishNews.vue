@@ -112,7 +112,7 @@ export default {
                         const { data } = response;
                         if (data.code === 200) {
                             this.$message.success('发布成功');
-                            this.$router.push('/news-record');
+                            this.$router.push('/home');
                         } else {
                             this.$message.error(data.msg || '发布失败');
                         }

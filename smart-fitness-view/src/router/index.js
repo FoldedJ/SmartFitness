@@ -103,7 +103,7 @@ const routes = [
     children: [
       {
         name: '健康资讯',
-        path: "/news-record",
+        path: "/home",
         component: () => import(`@/views/user/Home.vue`),
         meta: {
           requireAuth: true,
