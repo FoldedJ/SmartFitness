@@ -10,7 +10,6 @@
         <module name="smart-fitness-api" />
         <module name="health-api" />
         <module name="seniors-nursing" />
-        <module name="personal-health-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
