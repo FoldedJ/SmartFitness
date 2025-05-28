@@ -18,7 +18,7 @@ public interface NewsMapper {
 
     void update(News news);
 
-    void batchDelete(@Param(value = "ids") List<Long> ids);
+    void batchDelete(@Param(value = "ids") List<Integer> ids);
 
     List<NewsVO> query(NewsQueryDto newsQueryDto);
 

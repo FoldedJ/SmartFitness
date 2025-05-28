@@ -46,4 +46,8 @@ public class Result<T> {
         this.code = code;
         this.msg = msg;
     }
+
+    public static <T> Result<T> error(String msg) {
+        return new Result<>(ResultCode.REQUEST_ERROR.getCode(), msg);
+    }
 }

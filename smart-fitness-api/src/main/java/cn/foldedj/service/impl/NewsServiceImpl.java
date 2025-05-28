@@ -43,7 +43,7 @@ public class NewsServiceImpl implements NewsService {
      * @return Result<Void>
      */
     @Override
-    public Result<Void> batchDelete(List<Long> ids) {
+    public Result<Void> batchDelete(List<Integer> ids) {
         newsMapper.batchDelete(ids);
         return ApiResult.success();
     }
@@ -91,6 +91,11 @@ public class NewsServiceImpl implements NewsService {
                 return ApiResult.success(newsList.get(0).getViewsNumber());
             }
         }
-        return ApiResult.error("获取新闻信息失败");
+        return ApiResult.error("帖子不存在");
+    }
+
+    @Override
+    public News getById(Integer id) {
+        return newsMapper.getById(id);
     }
 }

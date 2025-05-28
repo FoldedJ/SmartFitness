@@ -14,7 +14,7 @@ public interface NewsService {
 
     Result<Void> save(News news);
 
-    Result<Void> batchDelete(List<Long> ids);
+    Result<Void> batchDelete(List<Integer> ids);
 
     Result<Void> update(News news);
 
@@ -27,5 +27,13 @@ public interface NewsService {
      * @return Result<Integer> 返回更新后的浏览次数
      */
     Result<Integer> increaseViews(Integer id);
+
+    /**
+     * 根据ID获取帖子信息
+     *
+     * @param id 帖子ID
+     * @return News 帖子信息
+     */
+    News getById(Integer id);
 
 }

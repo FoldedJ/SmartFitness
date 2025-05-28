@@ -42,7 +42,7 @@ public class NewsController {
      * @return Result<Void> 通用响应体
      */
     @PostMapping(value = "/batchDelete")
-    public Result<Void> batchDelete(@RequestBody List<Long> ids) {
+    public Result<Void> batchDelete(@RequestBody List<Integer> ids) {
         return newsService.batchDelete(ids);
     }
 
@@ -67,6 +67,37 @@ public class NewsController {
     @PostMapping(value = "/query")
     public Result<List<NewsVO>> query(@RequestBody NewsQueryDto NewsQueryDto) {
         return newsService.query(NewsQueryDto);
+    }
+
+    /**
+     * 查询当前用户发布的帖子
+     *
+     * @return Result<List<NewsVO>> 通用响应
+     */
+    @Pager
+    @PostMapping(value = "/queryMyNews")
+    public Result<List<NewsVO>> queryMyNews() {
+        NewsQueryDto newsQueryDto = new NewsQueryDto();
+        newsQueryDto.setPublisher(LocalThreadHolder.getUserId());
+        return newsService.query(newsQueryDto);
+    }
+
+    /**
+     * 删除当前用户发布的帖子
+     *
+     * @param ids 要删除的帖子ID列表
+     * @return Result<Void> 通用响应体
+     */
+    @PostMapping(value = "/deleteMyNews")
+    public Result<Void> deleteMyNews(@RequestBody List<Integer> ids) {
+        // 验证帖子是否属于当前用户
+        for (Integer id : ids) {
+            News news = newsService.getById(id);
+            if (news == null || !news.getPublisher().equals(LocalThreadHolder.getUserId())) {
+                return Result.error("无权删除该帖子");
+            }
+        }
+        return newsService.batchDelete(ids);
     }
 
     /**

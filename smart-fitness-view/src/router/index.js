@@ -152,6 +152,18 @@ const routes = [
         },
         isHidden: true,
       },
+      {
+        path: "/user/publish-news",
+        component: () => import(`@/views/user/PublishNews.vue`),
+      },
+      {
+        name: '我的帖子',
+        path: "/user/my-news",
+        component: () => import(`@/views/user/MyNews.vue`),
+        meta: {
+          requireAuth: true,
+        }
+      },
     ]
   }
 ];
