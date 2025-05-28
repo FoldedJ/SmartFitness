@@ -118,7 +118,7 @@
                     style="background-color: rgb(96, 98, 102);color: rgb(247,248,249);border: none;" class="customer"
                     type="info" @click="updateOperation()">修改</el-button>
                 <el-button class="customer" size="small" style="background-color: rgb(241, 241, 241);border: none;"
-                    @click="handleCancel">取消</el-button>
+                    @click="dialogUserOperaion = false">取消</el-button>
             </span>
         </el-dialog>
     </el-row>
@@ -261,24 +261,11 @@ export default {
                 this.$message.error('提交失败，请稍后再试！');
             }
         },
-        handleCancel() {
-            this.dialogUserOperaion = false;
-            this.isOperation = false;
-            this.clearFormData();
-        },
         closeDialog() {
             this.dialogUserOperaion = false;
-            this.isOperation = false;
-            this.clearFormData();
         },
         clearFormData() {
-            this.data = {
-                cover: '',
-                name: '',
-                tagId: '',
-                isTop: false,
-                content: ''
-            };
+            this.data = {};
         },
         async fetchFreshData() {
             try {
