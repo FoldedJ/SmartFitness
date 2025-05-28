@@ -52,14 +52,14 @@ const routes = [
       },
       {
         path: "/tagsManage",
-        name: '资讯分类',
+        name: '帖子分类',
         icon: 'el-icon-house',
         component: () => import(`@/views/admin/TagsManage.vue`),
         meta: { requireAuth: true },
       },
       {
         path: "/newsManage",
-        name: '资讯管理',
+        name: '帖子管理',
         icon: 'el-icon-document',
         component: () => import(`@/views/admin/NewsManage.vue`),
         meta: { requireAuth: true },
@@ -144,7 +144,7 @@ const routes = [
         isHidden: true,
       },
       {
-        name: '发布资讯',
+        name: '发布帖子',
         path: "/publish-news",
         component: () => import(`@/views/user/PublishNews.vue`),
         meta: {

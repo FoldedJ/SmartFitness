@@ -22,7 +22,7 @@
             </div>
         </el-col>
         <el-col :span="6">
-            <h3 style="padding: 10px 30px;">资讯推荐</h3>
+            <h3 style="padding: 10px 30px;">推荐帖子</h3>
             <el-col @click.native="newsItemClick(news)" :span="24" :key="index" v-for="(news, index) in newsTopList">
                 <div style="padding: 25px 30px;box-sizing: border-box;">
                     <img :src="news.cover" :alt="news.name" style="width: 100%;height: 118px;border-radius: 5px;">
@@ -123,7 +123,7 @@ export default {
         parseTime(time) {
             return timeAgo(time);
         },
-        // 查询推荐资讯
+        // 查询推荐帖子
         loadAllTopNews() {
             const newQueryDto = { isTop: true };
             this.$axios.post('/news/query', newQueryDto).then(response => {

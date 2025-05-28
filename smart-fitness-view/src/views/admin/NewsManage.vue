@@ -16,7 +16,7 @@
                 <span style="float: right;">
                     <el-button size="small"
                         style="background-color: rgb(96, 98, 102);color: rgb(247,248,249);border: none;"
-                        class="customer" type="info" @click="add()"><i class="el-icon-plus"></i>新增资讯</el-button>
+                        class="customer" type="info" @click="add()"><i class="el-icon-plus"></i>新增帖子</el-button>
                 </span>
             </el-row>
         </el-row>
@@ -38,7 +38,7 @@
                     <template slot-scope="scope">
                         <i v-if="!scope.row.isTop" style="margin-right: 5px;" class="el-icon-warning"></i>
                         <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
-                        <el-tooltip v-if="!scope.row.isTop" class="item" effect="dark" content="未推荐资讯，不做推荐展示"
+                        <el-tooltip v-if="!scope.row.isTop" class="item" effect="dark" content="未推荐帖子，不做推荐展示"
                             placement="bottom-end">
                             <span
                                 style="cursor: pointer;;text-decoration: underline;text-decoration-style: dashed;">未推荐</span>
@@ -68,7 +68,7 @@
         </el-row>
         <el-dialog :show-close="false" :visible.sync="dialogUserOperaion" width="50%">
             <div slot="title">
-                <p class="dialog-title">{{ !isOperation ? '新增资讯' : '修改资讯' }}</p>
+                <p class="dialog-title">{{ !isOperation ? '新增帖子' : '修改帖子' }}</p>
             </div>
             <div style="padding:0 20px;">
                 <!-- 封面 -->
@@ -159,7 +159,7 @@ export default {
         onReceiveContent(html) {
             this.data.content = html;
         },
-        // 加载全部的资讯数据
+        // 加载全部的帖子数据
         loadAllTags() {
             this.$axios.post(`/tags/query`, {}).then(response => {
                 const { data } = response;
@@ -171,11 +171,11 @@ export default {
         },
         handleAvatarSuccess(res, file) {
             if (res.code !== 200) {
-                this.$message.error(`资讯封面上传异常`);
+                this.$message.error(`帖子封面上传异常`);
                 return;
             }
             this.data.cover = '';
-            this.$message.success(`资讯封面上传成功`);
+            this.$message.success(`帖子封面上传成功`);
             this.data.cover = res.data;
         },
         // 多选框选中
@@ -189,7 +189,7 @@ export default {
                 return;
             }
             const confirmed = await this.$swalConfirm({
-                title: '删除资讯数据',
+                title: '删除帖子数据',
                 text: `删除后不可恢复，是否继续？`,
                 icon: 'warning',
             });
@@ -216,7 +216,7 @@ export default {
                         showConfirmButton: false,
                         timer: 2000,
                     });
-                    console.error(`资讯信息删除异常：`, e);
+                    console.error(`帖子信息删除异常：`, e);
                 }
             }
         },
@@ -230,7 +230,7 @@ export default {
             try {
                 const response = await this.$axios.put('/news/update', this.data);
                 this.$swal.fire({
-                    title: '资讯信息修改',
+                    title: '帖子信息修改',
                     text: response.data.msg,
                     icon: response.data.code === 200 ? 'success' : 'error',
                     showConfirmButton: false,
@@ -289,7 +289,7 @@ export default {
                 this.tableData = data.data;
                 this.totalItems = data.total;
             } catch (error) {
-                console.error('查询资讯信息异常:', error);
+                console.error('查询帖子信息异常:', error);
             }
         },
         add() {

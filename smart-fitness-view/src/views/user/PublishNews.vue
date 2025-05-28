@@ -6,14 +6,14 @@
                     <i class="el-icon-arrow-left"></i>
                     返回首页
                 </span>
-                发布资讯
+                发布帖子
             </p>
         </div>
         <div style="height: 6px;background-color: rgb(248, 248, 248);"></div>
         <div style="padding: 20px 0;">
             <el-form :model="newsForm" :rules="rules" ref="newsForm" label-width="100px">
                 <el-form-item label="标题" prop="name">
-                    <el-input v-model="newsForm.name" placeholder="请输入资讯标题"></el-input>
+                    <el-input v-model="newsForm.name" placeholder="请输帖子标题"></el-input>
                 </el-form-item>
                 <el-form-item label="标签" prop="tagId">
                     <el-select v-model="newsForm.tagId" placeholder="请选择标签" style="width: 100%;">
@@ -33,7 +33,7 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="内容" prop="content">
-                    <el-input type="textarea" v-model="newsForm.content" :rows="10" placeholder="请输入资讯内容"></el-input>
+                    <el-input type="textarea" v-model="newsForm.content" :rows="10" placeholder="请输帖子内容"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('newsForm')">发布</el-button>
@@ -57,7 +57,7 @@ export default {
             tags: [],
             rules: {
                 name: [
-                    { required: true, message: '请输入资讯标题', trigger: 'blur' },
+                    { required: true, message: '请输帖子标题', trigger: 'blur' },
                     { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
                 ],
                 tagId: [
@@ -67,7 +67,7 @@ export default {
                     { required: true, message: '请上传封面图片', trigger: 'change' }
                 ],
                 content: [
-                    { required: true, message: '请输入资讯内容', trigger: 'blur' },
+                    { required: true, message: '请输帖子内容', trigger: 'blur' },
                     { min: 10, message: '内容不能少于10个字符', trigger: 'blur' }
                 ]
             }
