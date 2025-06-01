@@ -97,6 +97,9 @@
             <if test="isTop != null">
                 AND n.IS_TOP = #{isTop}
             </if>
+            <if test="publisher != null">
+                AND n.PUBLISHER = #{publisher}
+            </if>
             <if test="startTime != null and endTime != null">
                 AND n.CREATE_TIME BETWEEN #{startTime} AND #{endTime}
             </if>

@@ -94,7 +94,7 @@ export default {
                 const { data } = response;
                 if (data.code === 200) {
                     this.tableData = data.data;
-                    this.totalItems = data.total;
+                    this.totalItems = data.total || 0;
                 } else {
                     this.$message.error(data.message || '查询失败');
                 }
