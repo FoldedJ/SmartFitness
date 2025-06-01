@@ -2,7 +2,7 @@
     <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
         <el-row style="padding: 10px;margin-left: 10px;">
             <el-row>
-                <el-select @change="changeNewsTag" size="small" v-model="newsQueryDto.tagId" placeholder="资讯分类">
+                <el-select @change="changeNewsTag" size="small" v-model="newsQueryDto.tagId" placeholder="帖子分类">
                     <el-option v-for="tag in tagsList" :key="tag.id" :label="tag.name" :value="tag.id">
                     </el-option>
                 </el-select>
@@ -10,7 +10,7 @@
                     type="daterange" range-separator="至" start-placeholder="发布开始" end-placeholder="发布结束">
                 </el-date-picker>
                 <el-input size="small" style="width: 188px;margin-left: 5px;margin-right: 6px;"
-                    v-model="newsQueryDto.name" placeholder="资讯标题" clearable @clear="handleFilterClear">
+                    v-model="newsQueryDto.name" placeholder="帖子标题" clearable @clear="handleFilterClear">
                     <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
                 </el-input>
                 <span style="float: right;">

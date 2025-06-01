@@ -20,7 +20,6 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="class-net" options="-parameters" />
       <module name="health-api" options="-parameters" />
-      <module name="personal-health-api" options="-parameters" />
       <module name="seniors-nursing" options="-parameters" />
       <module name="smart-fitness-api" options="-parameters" />
     </option>

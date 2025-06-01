@@ -55,7 +55,7 @@ export default {
         time(createTime) {
             return timeAgo(createTime);
         },
-        // 加载资讯
+        // 加载帖子
         loadMessages () {
             const messageQueryDto = {
                 current: 1,

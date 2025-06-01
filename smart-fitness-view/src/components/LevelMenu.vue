@@ -26,28 +26,6 @@
                     </el-col>
                 </el-row>
             </li>
-            <li style="position: absolute;right: 450px;cursor: pointer;">
-                <span @click="healthDataRecord" style="margin:14px 10px;">
-                    <i class="el-icon-upload"></i>
-                    指标记录
-                </span>
-            </li>
-            <li style="position: absolute;right: 365px;cursor: pointer;">
-                <span @click="publishNews" style="margin:14px 10px;">
-                    <i class="el-icon-edit-outline"></i>
-                    发布
-                </span>
-            </li>
-            <li style="position: absolute;right: 310px;">
-                <el-badge style="margin-left: 5px;font-size: 16px;" v-if="noReadMsg !== 0" :value="noReadMsg">
-                    <span class="message-span" @click="messageCenter">
-                        <i class="el-icon-bell"></i>
-                    </span>
-                </el-badge>
-                <span style="margin-left: 5px;font-size: 16px;" v-else class="message-span" @click="messageCenter">
-                    <i class="el-icon-bell"></i>
-                </span>
-            </li>
             <li>
                 <span class="user-block">
                     <el-dropdown class="user-dropdown">
@@ -61,6 +39,15 @@
                                 @click.native="userCenterPanel">个人中心</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-warning-outline"
                                 @click.native="resetPwd">修改密码</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-upload"
+                                @click.native="healthDataRecord">指标记录</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-edit-outline"
+                                @click.native="publishNews">发布</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-bell"
+                                @click.native="messageCenter">
+                                消息通知
+                                <el-badge v-if="noReadMsg !== 0" :value="noReadMsg" style="margin-left: 5px;"></el-badge>
+                            </el-dropdown-item>
                             <el-dropdown-item icon="el-icon-back" @click.native="loginOut">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>

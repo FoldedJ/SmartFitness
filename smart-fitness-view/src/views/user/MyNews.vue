@@ -1,14 +1,6 @@
 <template>
     <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
-        <el-row style="padding: 10px;margin-left: 10px;">
-            <el-row>
-                <el-input size="small" style="width: 188px;margin-right: 6px;"
-                    v-model="newsQueryDto.name" placeholder="帖子标题" clearable @clear="handleFilterClear">
-                    <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
-                </el-input>
-            </el-row>
-        </el-row>
-        <el-row style="margin: 0 20px;border-top: 1px solid rgb(245,245,245);">
+        <el-row style="margin: 0 20px;">
             <el-table row-key="id" @selection-change="handleSelectionChange" :data="tableData" style="width: 100%">
                 <el-table-column prop="cover" width="80" label="首图">
                     <template slot-scope="scope">
@@ -52,21 +44,13 @@ export default {
             pageSize: 10,
             totalItems: 0,
             tableData: [],
-            selectedRows: [],
-            newsQueryDto: {}
+            selectedRows: []
         };
     },
     created() {
         this.fetchFreshData();
     },
     methods: {
-        handleFilterClear() {
-            this.newsQueryDto.name = '';
-            this.fetchFreshData();
-        },
-        handleFilter() {
-            this.fetchFreshData();
-        },
         handleSelectionChange(selection) {
             this.selectedRows = selection;
         },
@@ -92,6 +76,7 @@ export default {
         },
         handleSizeChange(val) {
             this.pageSize = val;
+            this.currentPage = 1;
             this.fetchFreshData();
         },
         handleCurrentChange(val) {
@@ -101,17 +86,21 @@ export default {
         fetchFreshData() {
             const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
             const params = {
-                ...this.newsQueryDto,
-                userId: userInfo.id,
-                pageNum: this.currentPage,
-                pageSize: this.pageSize
+                current: this.currentPage,
+                size: this.pageSize,
+                userId: userInfo.id
             };
             this.$axios.post(`/news/queryMyNews`, params).then(response => {
                 const { data } = response;
                 if (data.code === 200) {
                     this.tableData = data.data;
                     this.totalItems = data.total;
+                } else {
+                    this.$message.error(data.message || '查询失败');
                 }
+            }).catch(error => {
+                console.error('查询我的帖子失败:', error);
+                this.$message.error('查询失败');
             });
         }
     }
