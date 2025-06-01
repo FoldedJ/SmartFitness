@@ -154,7 +154,7 @@ const routes = [
       },
       {
         name: '我的帖子',
-        path: "/user/my-news",
+        path: "/user/my-posts",
         component: () => import(`@/views/user/MyNews.vue`),
         meta: {
           requireAuth: true,
