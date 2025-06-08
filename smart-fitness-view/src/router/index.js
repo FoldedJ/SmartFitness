@@ -168,6 +168,12 @@ const routes = [
           requireAuth: true,
         },
       },
+      {
+        path: '/user/diet-record',
+        name: 'DietRecord',
+        component: () => import('@/views/user/DietRecord.vue'),
+        meta: { title: '饮食记录' }
+      },
     ]
   }
 ];

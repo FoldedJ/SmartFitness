@@ -1,6 +1,7 @@
 package cn.foldedj.pojo.dto.query.base;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+@SuperBuilder
 public class QueryDto {
     /**
      * 当前页
