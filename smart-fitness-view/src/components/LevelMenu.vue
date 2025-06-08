@@ -14,11 +14,11 @@
                 </span>
             </li>
             <li>
-                <el-row>
-                    <el-col :span="18">
+                <el-row style="width: 250px;">
+                    <el-col :span="16">
                         <input class="search-input" placeholder="搜索..." @keyup.enter="search" v-model="filterText" />
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="8">
                         <span @click="search"
                             style="background-color: #000;color: #f1f1f1;border-radius: 5px;padding: 5px 10px;width: 100%;box-sizing: border-box;">
                             搜索
@@ -41,6 +41,8 @@
                                 @click.native="resetPwd">修改密码</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-upload"
                                 @click.native="healthDataRecord">指标记录</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-food"
+                                @click.native="dietRecord">饮食记录</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-edit-outline"
                                 @click.native="publishNews">发布</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-bell"

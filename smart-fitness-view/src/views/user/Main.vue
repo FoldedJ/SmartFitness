@@ -298,6 +298,10 @@ export default {
             else if (event === 'healthDataRecord') {
                 this.$router.push('/record');
             }
+            // 饮食记录
+            else if (event === 'dietRecord') {
+                this.$router.push('/user/diet-record');
+            }
         },
         removeFood(food) {
             // 清空输入项

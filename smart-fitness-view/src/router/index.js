@@ -170,7 +170,7 @@ const routes = [
       },
       {
         path: '/user/diet-record',
-        name: 'DietRecord',
+        name: '饮食记录',
         component: () => import('@/views/user/DietRecord.vue'),
         meta: { title: '饮食记录' }
       },
