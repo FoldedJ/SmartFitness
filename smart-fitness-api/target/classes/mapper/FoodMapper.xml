@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.foldedj.mapper.FoodMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO SYSDBA.FOOD (FOOD_NAME, SERVING_SIZE, SERVING_UNIT, CALORIES, PROTEIN, CARBOHYDRATE, FAT, FIBER, SODIUM, SOURCE, CREATE_TIME)
+        VALUES (#{foodName}, #{servingSize}, #{servingUnit}, #{calories}, #{protein}, #{carbohydrate}, #{fat}, #{fiber}, #{sodium}, #{source}, #{createTime})
+    </insert>
+
+    <update id="update">
+        UPDATE SYSDBA.FOOD
+        <set>
+            <if test="foodName != null and foodName != ''">
+                FOOD_NAME = #{foodName},
+            </if>
+            <if test="servingSize != null">
+                SERVING_SIZE = #{servingSize},
+            </if>
+            <if test="servingUnit != null and servingUnit != ''">
+                SERVING_UNIT = #{servingUnit},
+            </if>
+            <if test="calories != null">
+                CALORIES = #{calories},
+            </if>
+            <if test="protein != null">
+                PROTEIN = #{protein},
+            </if>
+            <if test="carbohydrate != null">
+                CARBOHYDRATE = #{carbohydrate},
+            </if>
+            <if test="fat != null">
+                FAT = #{fat},
+            </if>
+            <if test="fiber != null">
+                FIBER = #{fiber},
+            </if>
+            <if test="sodium != null">
+                SODIUM = #{sodium},
+            </if>
+            <if test="source != null and source != ''">
+                SOURCE = #{source},
+            </if>
+        </set>
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="batchDelete">
+        DELETE FROM SYSDBA.FOOD
+        WHERE ID IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="query" resultMap="BaseResultMap">
+        SELECT
+            f.ID,
+            f.FOOD_NAME,
+            f.SERVING_SIZE,
+            f.SERVING_UNIT,
+            f.CALORIES,
+            f.PROTEIN,
+            f.CARBOHYDRATE,
+            f.FAT,
+            f.FIBER,
+            f.SODIUM,
+            f.SOURCE,
+            f.CREATE_TIME
+        FROM SYSDBA.FOOD f
+        <where>
+            <if test="foodName != null and foodName != ''">
+                AND f.FOOD_NAME LIKE '%' || #{foodName} || '%'
+            </if>
+            <if test="source != null and source != ''">
+                AND f.SOURCE LIKE '%' || #{source} || '%'
+            </if>
+            <if test="startTime != null">
+                AND f.CREATE_TIME >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND f.CREATE_TIME &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY f.CREATE_TIME DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM SYSDBA.FOOD f
+        <where>
+            <if test="foodName != null and foodName != ''">
+                AND f.FOOD_NAME LIKE '%' || #{foodName} || '%'
+            </if>
+            <if test="source != null and source != ''">
+                AND f.SOURCE LIKE '%' || #{source} || '%'
+            </if>
+            <if test="startTime != null">
+                AND f.CREATE_TIME >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND f.CREATE_TIME &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT
+            f.ID,
+            f.FOOD_NAME,
+            f.SERVING_SIZE,
+            f.SERVING_UNIT,
+            f.CALORIES,
+            f.PROTEIN,
+            f.CARBOHYDRATE,
+            f.FAT,
+            f.FIBER,
+            f.SODIUM,
+            f.SOURCE,
+            f.CREATE_TIME
+        FROM SYSDBA.FOOD f
+        WHERE f.ID = #{id}
+    </select>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.vo.FoodVO">
+        <id column="ID" property="id"/>
+        <result column="FOOD_NAME" property="foodName"/>
+        <result column="SERVING_SIZE" property="servingSize"/>
+        <result column="SERVING_UNIT" property="servingUnit"/>
+        <result column="CALORIES" property="calories"/>
+        <result column="PROTEIN" property="protein"/>
+        <result column="CARBOHYDRATE" property="carbohydrate"/>
+        <result column="FAT" property="fat"/>
+        <result column="FIBER" property="fiber"/>
+        <result column="SODIUM" property="sodium"/>
+        <result column="SOURCE" property="source"/>
+        <result column="CREATE_TIME" property="createTime"/>
+    </resultMap>
+
+</mapper>

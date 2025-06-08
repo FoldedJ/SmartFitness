@@ -160,6 +160,14 @@ const routes = [
           requireAuth: true,
         },
       },
+      {
+        name: '饮食管理',
+        path: "/food-management",
+        component: () => import(`@/views/user/FoodManagement.vue`),
+        meta: {
+          requireAuth: true,
+        },
+      },
     ]
   }
 ];

@@ -29,5 +29,16 @@ public class QueryDto {
      * 结束时间
      */
     private LocalDateTime endTime;
+
+    /**
+     * 获取分页偏移量
+     * @return 偏移量
+     */
+    public Integer getOffset() {
+        if (current != null && size != null && current > 0) {
+            return (current - 1) * size;
+        }
+        return 0;
+    }
 }
 
