@@ -10,6 +10,8 @@
                           USER_ROLE,
                           IS_LOGIN,
                           IS_WORD,
+                          BIRTH_DATE,
+                          GENDER,
                           CREATE_TIME)
         VALUES (#{userAccount},
                 #{userName},
@@ -19,6 +21,8 @@
                 #{userRole},
                 #{isLogin},
                 #{isWord},
+                #{birthDate},
+                #{gender},
                 #{createTime})
     </insert>
     <update id="update" parameterType="cn.foldedj.pojo.entity.User">
@@ -47,6 +51,12 @@
             </if>
             <if test="userRole != null">
                 USER_ROLE = #{userRole},
+            </if>
+            <if test="birthDate != null">
+                BIRTH_DATE = #{birthDate},
+            </if>
+            <if test="gender != null">
+                GENDER = #{gender},
             </if>
         </set>
         WHERE ID = #{id}
@@ -154,6 +164,8 @@
         <result column="USER_ROLE" property="userRole"/>
         <result column="IS_LOGIN" property="isLogin"/>
         <result column="IS_WORD" property="isWord"/>
+        <result column="BIRTH_DATE" property="birthDate"/>
+        <result column="GENDER" property="gender"/>
         <result column="CREATE_TIME" property="createTime"/>
     </resultMap>
 

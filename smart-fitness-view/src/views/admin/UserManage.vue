@@ -26,6 +26,8 @@
                 <el-table-column prop="userName" label="名称"></el-table-column>
                 <el-table-column prop="userAccount" width="128" label="账号"></el-table-column>
                 <el-table-column prop="userEmail" width="168" label="邮箱"></el-table-column>
+                <el-table-column prop="birthDate" width="120" label="出生日期"></el-table-column>
+                <el-table-column prop="gender" width="80" label="性别"></el-table-column>
                 <el-table-column prop="userRole" width="68" label="角色">
                     <template slot-scope="scope">
                         <span>{{ scope.row.userRole === 1 ? '管理员' : '用户' }}</span>
@@ -86,6 +88,28 @@
                     <input class="dialog-input" v-model="data.userAccount" placeholder="账号" />
                     <span class="dialog-hover">邮箱</span>
                     <input class="dialog-input" v-model="data.userEmail" placeholder="邮箱" />
+                    <span class="dialog-hover">出生日期</span>
+                    <el-date-picker
+                        class="dialog-input"
+                        v-model="data.birthDate"
+                        type="date"
+                        placeholder="选择出生日期"
+                        format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                    <span class="dialog-hover">性别</span>
+                    <el-select
+                        class="dialog-input"
+                        v-model="data.gender"
+                        placeholder="选择性别"
+                        :disabled="isOperation && data.gender !== null && data.gender !== undefined && data.gender !== ''">
+                        <el-option label="男" value="男"></el-option>
+                        <el-option label="女" value="女"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                    <p v-if="isOperation && data.gender !== null && data.gender !== undefined && data.gender !== ''" style="font-size: 12px;color: #909399;margin-top: 5px;margin-bottom: 10px;">
+                        性别一旦设置后不可修改
+                    </p>
                     <span class="dialog-hover">密码</span>
                     <input class="dialog-input" v-model="userPwd" type="password" placeholder="密码" />
                 </el-row>
@@ -134,23 +158,31 @@
 export default {
     data() {
         return {
-            roleStatus: false,
-            userPwd: '',
+            searchTime: null,
+            userQueryDto: {
+                userName: null,
+                userAccount: null,
+                userEmail: null,
+                role: null,
+                isLogin: null,
+                isWord: null
+            },
             userAvatar: '',
+            userPwd: '',
+            originalGender: '', // 保存原始性别值
             data: {},
-            filterText: '',
+            isOperation: false,
+            dialogUserOperaion: false,
+            dialogStatusOperation: false,
+            tableData: [],
+            multipleSelection: [],
             currentPage: 1,
             pageSize: 10,
             totalItems: 0,
-            dialogStatusOperation: false,
-            dialogUserOperaion: false, // 开关
-            isOperation: false, // 开关-标识新增或修改
-            tableData: [],
-            searchTime: [],
-            selectedRows: [],
-            status: null,
-            userQueryDto: {}, // 搜索条件
-            messsageContent: ''
+            statusData: {
+                isLogin: false,
+                isWord: false
+            }
         };
     },
     created() {
@@ -271,12 +303,17 @@ export default {
         // 修改信息
         async updateOperation() {
             if (this.userPwd !== '') {
-                const pwd = this.$md5(this.$md5(this.userPwd));
-                this.data.userPwd = pwd;
+                this.data.userPwd = this.$md5(this.$md5(this.userPwd));
             } else {
                 this.data.userPwd = null;
             }
             this.data.userAvatar = this.userAvatar;
+            
+            // 如果是编辑模式且性别已经设置，则不允许修改性别
+            if (this.isOperation && this.originalGender !== null && this.originalGender !== undefined && this.originalGender !== '') {
+                this.data.gender = this.originalGender;
+            }
+            
             try {
                 const response = await this.$axios.put('/user/backUpdate', this.data);
                 if (response.data.code === 200) {
@@ -376,11 +413,11 @@ export default {
             this.fetchFreshData();
         },
         handleEdit(row) {
-            this.dialogUserOperaion = true;
             this.isOperation = true;
-            row.userPwd = null;
+            this.dialogUserOperaion = true;
+            this.data = { ...row };
             this.userAvatar = row.userAvatar;
-            this.data = { ...row }
+            this.originalGender = row.gender; // 保存原始性别值
         },
         handleDelete(row) {
             this.selectedRows.push(row);

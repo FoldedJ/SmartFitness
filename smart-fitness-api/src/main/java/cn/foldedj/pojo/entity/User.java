@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -61,6 +62,17 @@ public class User {
      * 禁言状态(0:可用；1：不可用)
      */
     private Boolean isWord;
+
+    /**
+     * 出生日期
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate birthDate;
+
+    /**
+     * 性别
+     */
+    private String gender;
 
     /**
      * 用户注册时间

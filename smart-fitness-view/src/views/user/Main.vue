@@ -35,6 +35,36 @@
                     </p>
                     <input class="modelInput" type="text" v-model="data.email" placeholder="个人邮箱">
                 </el-row>
+                <el-row>
+                    <p style="font-size: 12px;padding: 3px 0;">
+                        <span class="modelName">出生日期</span>
+                    </p>
+                    <el-date-picker
+                        class="modelInput"
+                        v-model="data.birthDate"
+                        type="date"
+                        placeholder="选择出生日期"
+                        format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-row>
+                <el-row>
+                    <p style="font-size: 12px;padding: 3px 0;">
+                        <span class="modelName">性别</span>
+                    </p>
+                    <el-select
+                        class="modelInput"
+                        v-model="data.gender"
+                        placeholder="选择性别"
+                        :disabled="userInfo.gender !== null && userInfo.gender !== undefined && userInfo.gender !== ''">
+                        <el-option label="男" value="男"></el-option>
+                        <el-option label="女" value="女"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                    <p v-if="userInfo.gender !== null && userInfo.gender !== undefined && userInfo.gender !== ''" style="font-size: 12px;color: #909399;margin-top: 5px;">
+                        性别一旦设置后不可修改
+                    </p>
+                </el-row>
             </el-row>
             <span slot="footer" class="dialog-footer">
                 <el-button class="customer" size="small" style="background-color: rgb(241, 241, 241);border: none;"
@@ -203,8 +233,15 @@ export default {
                 const userUpdateDTO = {
                     userAvatar: this.data.url,
                     userName: this.data.name,
-                    userEmail: this.data.email
+                    userEmail: this.data.email,
+                    birthDate: this.data.birthDate
                 }
+                
+                // 只有当性别为空时才允许更新性别
+                if (this.userInfo.gender === null || this.userInfo.gender === undefined || this.userInfo.gender === '') {
+                    userUpdateDTO.gender = this.data.gender;
+                }
+                
                 const resposne = await this.$axios.put(`/user/update`, userUpdateDTO);
                 const { data } = resposne;
                 if (data.code === 200) {
@@ -415,14 +452,16 @@ export default {
                     this.$router.push('/login');
                     return;
                 }
-                const { id: userId, userAvatar, userName, userRole, userEmail } = res.data.data;
+                const { id: userId, userAvatar, userName, userRole, userEmail, birthDate, gender } = res.data.data;
                 // 将用户信息存储起来
                 sessionStorage.setItem('userInfo', JSON.stringify(res.data.data));
                 this.userInfo = {
                     url: userAvatar,
                     name: userName,
                     role: userRole,
-                    email: userEmail
+                    email: userEmail,
+                    birthDate: birthDate,
+                    gender: gender
                 };
                 this.data = { ...this.userInfo };
                 // 根据角色解析路由
