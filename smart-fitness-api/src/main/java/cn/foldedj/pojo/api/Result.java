@@ -14,12 +14,17 @@ public class Result<T> {
      * 响应消息
      */
     private String msg;
+    /**
+     * 响应数据
+     */
+    private T data;
 
     @Override
     public String toString() {
         return "Result{" +
                 "code=" + code +
                 ", msg='" + msg + '\'' +
+                ", data=" + data +
                 '}';
     }
 
@@ -39,6 +44,14 @@ public class Result<T> {
         this.msg = msg;
     }
 
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
     public Result() {
     }
 
@@ -47,7 +60,21 @@ public class Result<T> {
         this.msg = msg;
     }
 
+    public Result(Integer code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+    }
+
+    public boolean isSuccess() {
+        return this.code != null && this.code == 200;
+    }
+
     public static <T> Result<T> error(String msg) {
         return new Result<>(ResultCode.REQUEST_ERROR.getCode(), msg);
+    }
+
+    public static <T> Result<T> success(T data) {
+        return new Result<>(ResultCode.SUCCESS.getCode(), "success", data);
     }
 }

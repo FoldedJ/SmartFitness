@@ -174,6 +174,16 @@ const routes = [
         component: () => import('@/views/user/DietRecord.vue'),
         meta: { title: '饮食记录' }
       },
+      {
+        path: '/user/nutrition-target',
+        name: '营养目标',
+        component: () => import('@/views/user/NutritionTarget.vue'),
+        meta: { 
+          requireAuth: true,
+          title: '营养目标' 
+        }
+      },
+
     ]
   }
 ];

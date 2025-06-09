@@ -46,7 +46,7 @@
         </where>
         ORDER BY uh.CREATE_TIME DESC
         <if test="current != null and size != null">
-            OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
+            LIMIT #{size} OFFSET #{current}
         </if>
 
     </select>

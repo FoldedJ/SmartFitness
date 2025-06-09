@@ -43,6 +43,9 @@
                                 @click.native="healthDataRecord">指标记录</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-food"
                                 @click.native="dietRecord">饮食记录</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-data-analysis"
+                                @click.native="nutritionTarget">营养目标</el-dropdown-item>
+
                             <el-dropdown-item icon="el-icon-edit-outline"
                                 @click.native="publishNews">发布</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-bell"
@@ -121,6 +124,11 @@ export default {
         dietRecord() {
             this.$emit('eventListener', 'dietRecord');
         },
+        // 营养目标页面
+        nutritionTarget() {
+            this.$router.push('/user/nutrition-target');
+        },
+
         // 记录个人健康指标，传回父组件处理
         healthDataRecord() {
             this.$emit('eventListener', 'healthDataRecord');

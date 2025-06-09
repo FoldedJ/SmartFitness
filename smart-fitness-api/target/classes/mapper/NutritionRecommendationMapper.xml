@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.foldedj.mapper.NutritionRecommendationMapper">
+
+    <resultMap id="BaseResultMap" type="cn.foldedj.pojo.entity.NutritionRecommendation">
+        <id column="ID" property="id"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="RECOMMENDATION_DATE" property="recommendationDate"/>
+        <result column="CALORIES" property="calories"/>
+        <result column="PROTEIN" property="protein"/>
+        <result column="CARBOHYDRATE" property="carbohydrate"/>
+        <result column="FAT" property="fat"/>
+        <result column="FIBER" property="fiber"/>
+        <result column="SODIUM" property="sodium"/>
+        <result column="RECOMMENDATION_TYPE" property="recommendationType"/>
+        <result column="NOTES" property="notes"/>
+        <result column="CREATE_TIME" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="VOResultMap" type="cn.foldedj.pojo.vo.NutritionRecommendationVO" extends="BaseResultMap">
+        <result column="USER_NAME" property="userName"/>
+        <result column="GENDER" property="gender"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID, USER_ID, RECOMMENDATION_DATE, CALORIES, PROTEIN, CARBOHYDRATE, FAT, FIBER, SODIUM, RECOMMENDATION_TYPE, NOTES, CREATE_TIME
+    </sql>
+
+    <insert id="insert" parameterType="cn.foldedj.pojo.entity.NutritionRecommendation" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO NUTRITION_RECOMMENDATION (
+            ID, USER_ID, RECOMMENDATION_DATE, CALORIES, PROTEIN, CARBOHYDRATE, FAT, FIBER, SODIUM, RECOMMENDATION_TYPE, NOTES, CREATE_TIME
+        ) VALUES (
+            SYSDBA.NUTRITION_RECOMMENDATION_SEQ.NEXTVAL, #{userId}, #{recommendationDate}, #{calories}, #{protein}, #{carbohydrate}, #{fat}, #{fiber}, #{sodium}, #{recommendationType}, #{notes}, #{createTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="cn.foldedj.pojo.entity.NutritionRecommendation">
+        UPDATE NUTRITION_RECOMMENDATION
+        <set>
+            <if test="userId != null">USER_ID = #{userId},</if>
+            <if test="recommendationDate != null">RECOMMENDATION_DATE = #{recommendationDate},</if>
+            <if test="calories != null">CALORIES = #{calories},</if>
+            <if test="protein != null">PROTEIN = #{protein},</if>
+            <if test="carbohydrate != null">CARBOHYDRATE = #{carbohydrate},</if>
+            <if test="fat != null">FAT = #{fat},</if>
+            <if test="fiber != null">FIBER = #{fiber},</if>
+            <if test="sodium != null">SODIUM = #{sodium},</if>
+            <if test="recommendationType != null">RECOMMENDATION_TYPE = #{recommendationType},</if>
+            <if test="notes != null">NOTES = #{notes},</if>
+        </set>
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="batchDelete">
+        DELETE FROM NUTRITION_RECOMMENDATION
+        WHERE ID IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="query" resultMap="VOResultMap">
+        SELECT
+        r.<include refid="Base_Column_List"/>,
+        u.USER_NAME,
+        u.GENDER
+        FROM NUTRITION_RECOMMENDATION r
+        LEFT JOIN USER u ON r.USER_ID = u.ID
+        <where>
+            <if test="userId != null">
+                AND r.USER_ID = #{userId}
+            </if>
+            <if test="recommendationDate != null">
+                AND r.RECOMMENDATION_DATE = #{recommendationDate}
+            </if>
+            <if test="startDate != null">
+                AND r.RECOMMENDATION_DATE &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND r.RECOMMENDATION_DATE &lt;= #{endDate}
+            </if>
+            <if test="recommendationType != null and recommendationType != ''">
+                AND r.RECOMMENDATION_TYPE = #{recommendationType}
+            </if>
+        </where>
+        ORDER BY r.RECOMMENDATION_DATE DESC, r.CREATE_TIME DESC
+        <if test="pageSize != null and pageSize &gt; 0">
+            LIMIT #{pageSize}
+            <if test="pageNum != null">
+                OFFSET #{pageNum}
+            </if>
+        </if>
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM NUTRITION_RECOMMENDATION r
+        <where>
+            <if test="userId != null">
+                AND r.USER_ID = #{userId}
+            </if>
+            <if test="recommendationDate != null">
+                AND r.RECOMMENDATION_DATE = #{recommendationDate}
+            </if>
+            <if test="startDate != null">
+                AND r.RECOMMENDATION_DATE &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND r.RECOMMENDATION_DATE &lt;= #{endDate}
+            </if>
+            <if test="recommendationType != null and recommendationType != ''">
+                AND r.RECOMMENDATION_TYPE = #{recommendationType}
+            </if>
+        </where>
+    </select>
+
+    <select id="getById" resultMap="VOResultMap">
+        SELECT
+        r.<include refid="Base_Column_List"/>,
+        u.USER_NAME,
+        u.GENDER
+        FROM NUTRITION_RECOMMENDATION r
+        LEFT JOIN USER u ON r.USER_ID = u.ID
+        WHERE r.ID = #{id}
+    </select>
+</mapper>

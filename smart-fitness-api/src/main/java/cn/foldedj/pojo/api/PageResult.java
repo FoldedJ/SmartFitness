@@ -46,7 +46,7 @@ public class PageResult<T> extends Result<T> {
      * @author 【B站：程序员晨星】
      */
     public static <T> Result<T> success(T data, Integer total) {
-        PageResult<T> result = new PageResult<>(ResultCode.REQUEST_SUCCESS.getCode());
+        PageResult<T> result = new PageResult<>(ResultCode.SUCCESS.getCode());
         result.setData(data);
         result.setTotal(total);
         return result;

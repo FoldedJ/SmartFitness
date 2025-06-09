@@ -63,11 +63,11 @@ public class ApiResult<T> extends Result<T> {
     }
 
     public static <T> Result<T> success(String msg) {
-        return new Result<>(ResultCode.REQUEST_SUCCESS.getCode(), msg);
+        return new Result<>(ResultCode.SUCCESS.getCode(), msg);
     }
 
     public static <T> Result<T> success(String msg, T data) {
-        return new ApiResult<T>(ResultCode.REQUEST_SUCCESS.getCode(), msg, data);
+        return new ApiResult<T>(ResultCode.SUCCESS.getCode(), msg, data);
     }
 
     public static <T> Result<T> error(String msg) {

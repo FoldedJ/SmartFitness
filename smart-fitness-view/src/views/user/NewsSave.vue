@@ -20,24 +20,31 @@
 
 </template>
 <script>
-import { timeAgo } from "@/utils/data"
+import { timeAgo } from '@/utils/data';
+import { getUserInfo } from '@/utils/user';
+
 export default {
+    name: 'NewsSave',
     data() {
         return {
             newsSaveList: []
-        }
+        };
     },
     created() {
         this.loadAllSaveNews();
     },
     methods: {
+        // 转换时间
         parseTime(time) {
             return timeAgo(time);
         },
-        newsItemClick(news) {
-            // 确保news对象包含id字段
+        // 查看详情
+        toDetail(news) {
             const newsInfo = {
-                ...news,
+                title: news.newsTitle,
+                content: news.newsContent,
+                cover: news.newsCover,
+                createTime: news.createTime,
                 id: news.newsId
             };
             sessionStorage.setItem('newsInfo', JSON.stringify(newsInfo));
@@ -45,8 +52,9 @@ export default {
         },
         loadAllSaveNews() {
             // 查询条件，带上ID
-            const userInfo = sessionStorage.getItem('userInfo');
-            const userInfoEntity = JSON.parse(userInfo);
+            const userInfoEntity = getUserInfo();
+            if (!userInfoEntity) return;
+            
             const newsSaveQueryDto = {
                 userId: userInfoEntity.id
             }

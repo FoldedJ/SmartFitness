@@ -97,6 +97,30 @@
             <artifactId>fastjson2</artifactId>
             <version>2.0.33</version>
         </dependency>
+        
+        <!-- 腾讯云API SDK -->
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java-common</artifactId>
+            <version>3.1.1260</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java-hunyuan</artifactId>
+            <version>3.1.1260</version>
+        </dependency>
+        
+        <!-- Swagger API文档 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
     </dependencies>
 
     <build>

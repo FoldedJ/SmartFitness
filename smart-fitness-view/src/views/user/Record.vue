@@ -342,8 +342,10 @@ export default {
             });
         },
         getUserInfo() {
-            const userInfo = sessionStorage.getItem('userInfo');
-            this.userInfo = JSON.parse(userInfo);
+            const userInfoData = getUserInfo();
+            if (userInfoData) {
+                this.userInfo = userInfoData;
+            }
         },
     },
 };
