@@ -92,6 +92,13 @@ const routes = [
         component: () => import(`@/views/admin/EvaluationsManage.vue`),
         meta: { requireAuth: true },
       },
+      {
+        path: "/foodManage",
+        name: '食物管理',
+        icon: 'el-icon-food',
+        component: () => import(`@/views/admin/FoodManage.vue`),
+        meta: { requireAuth: true },
+      },
     ]
   },
   {
