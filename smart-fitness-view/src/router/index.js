@@ -181,8 +181,10 @@ const routes = [
         meta: { 
           requireAuth: true,
           title: '营养推荐' 
-        }
+        },
+        isHidden: true
       },
+      
     ]
   }
 ];
