@@ -37,13 +37,13 @@ public class ApiResult<T> extends Result<T> {
     }
 
     public static <T> Result<T> success() {
-        ApiResult<T> result = new ApiResult<>(ResultCode.REQUEST_SUCCESS.getCode());
+        ApiResult<T> result = new ApiResult<>(ResultCode.SUCCESS.getCode());
         result.setData(null);
         return result;
     }
 
     public static <T> Result<T> success(T data) {
-        ApiResult<T> result = new ApiResult<>(ResultCode.REQUEST_SUCCESS.getCode());
+        ApiResult<T> result = new ApiResult<>(ResultCode.SUCCESS.getCode());
         result.setData(data);
         return result;
     }
@@ -56,7 +56,7 @@ public class ApiResult<T> extends Result<T> {
      * @param <T>   泛型
      */
     public static <T> Result<T> success(T data, Integer total) {
-        ApiResult<T> result = new ApiResult<>(ResultCode.REQUEST_SUCCESS.getCode());
+        ApiResult<T> result = new ApiResult<>(ResultCode.SUCCESS.getCode());
         result.setData(data);
         result.setTotal(total);
         return result;

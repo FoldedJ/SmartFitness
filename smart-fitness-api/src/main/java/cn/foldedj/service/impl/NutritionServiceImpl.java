@@ -9,6 +9,7 @@ import cn.foldedj.pojo.api.ApiResult;
 import cn.foldedj.pojo.api.PageResult;
 import cn.foldedj.pojo.api.Result;
 import java.util.ArrayList;
+import java.util.List;
 import cn.foldedj.pojo.dto.query.extend.HealthModelConfigQueryDto;
 import cn.foldedj.pojo.dto.query.extend.NutritionRecommendationQueryDto;
 import cn.foldedj.pojo.dto.query.extend.UserHealthQueryDto;
@@ -23,7 +24,11 @@ import cn.foldedj.pojo.vo.UserHealthVO;
 import cn.foldedj.pojo.vo.UserNutritionTargetVO;
 import cn.foldedj.service.HealthModelConfigService;
 import cn.foldedj.service.NutritionService;
+import cn.foldedj.service.TencentHunyuanService;
 import cn.foldedj.service.UserHealthService;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -37,6 +42,8 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * 营养推荐服务实现类
@@ -59,6 +66,9 @@ public class NutritionServiceImpl implements NutritionService {
 
     @Resource
     private HealthModelConfigService healthModelConfigService;
+    
+    @Resource
+    private TencentHunyuanService tencentHunyuanService;
 
     /**
      * 根据用户ID获取用户营养目标
@@ -234,56 +244,175 @@ public class NutritionServiceImpl implements NutritionService {
         double bmi = weight / (heightInMeters * heightInMeters);
         bmi = BigDecimal.valueOf(bmi).setScale(2, RoundingMode.HALF_UP).doubleValue();
         
-        // 设置默认的营养素分配
-        int calories = 2000; // 默认热量
+        // 调用混元模型生成营养推荐
+        log.info("调用混元模型生成营养推荐，用户ID: {}, 身高: {}, 体重: {}, 年龄: {}, 性别: {}", userId, height, weight, age, user.getGender());
+        Result<String> modelResult = tencentHunyuanService.generateNutritionRecommendation(height, weight, age, user.getGender());
         
-        // 蛋白质：每千克体重1.6-2.2克
-        BigDecimal protein = BigDecimal.valueOf(weight * 1.8).setScale(2, RoundingMode.HALF_UP);
+        log.info("混元模型返回结果对象: {}", modelResult);
+        log.info("混元模型返回结果状态码: {}", modelResult.getCode());
+        log.info("混元模型返回结果消息: {}", modelResult.getMsg());
         
-        // 脂肪：总热量的25-30%
-        BigDecimal fat = BigDecimal.valueOf(calories * 0.25 / 9).setScale(2, RoundingMode.HALF_UP);
+        if (!modelResult.isSuccess()) {
+            log.error("调用混元模型失败: {}", modelResult.getMsg());
+            return ApiResult.error("生成营养推荐失败: " + modelResult.getMsg());
+        }
         
-        // 碳水化合物：剩余热量
-        BigDecimal proteinCalories = protein.multiply(BigDecimal.valueOf(4));
-        BigDecimal fatCalories = fat.multiply(BigDecimal.valueOf(9));
-        BigDecimal carbCalories = BigDecimal.valueOf(calories).subtract(proteinCalories).subtract(fatCalories);
-        BigDecimal carbohydrate = carbCalories.divide(BigDecimal.valueOf(4), 2, RoundingMode.HALF_UP);
+        // 解析模型返回的纯文本结果
+        String modelResponse = modelResult.getMsg();
+        log.info("混元模型返回结果数据: {}", modelResponse);
         
-        // 膳食纤维：每1000卡路里14克
-        BigDecimal fiber = BigDecimal.valueOf(calories * 14.0 / 1000).setScale(2, RoundingMode.HALF_UP);
-        
-        // 钠：2300毫克
-        BigDecimal sodium = BigDecimal.valueOf(2300).setScale(2, RoundingMode.HALF_UP);
-        
-        // 创建营养推荐
-        NutritionRecommendation recommendation = NutritionRecommendation.builder()
-                .userId(userId)
-                .recommendationDate(LocalDate.now())
-                .calories(calories)
-                .protein(protein)
-                .carbohydrate(carbohydrate)
-                .fat(fat)
-                .fiber(fiber)
-                .sodium(sodium)
-                .recommendationType("DAILY")
-                .notes("基于用户身高、体重、年龄和性别自动生成的营养推荐")
-                .createTime(LocalDateTime.now())
-                .build();
-        
-        // 保存营养推荐
-        nutritionRecommendationMapper.insert(recommendation);
-        
-        // 构建返回VO
-        NutritionRecommendationVO recommendationVO = new NutritionRecommendationVO();
-        BeanUtils.copyProperties(recommendation, recommendationVO);
-        recommendationVO.setUserName(user.getUserName());
-        recommendationVO.setGender(user.getGender());
-        recommendationVO.setAge(age);
-        recommendationVO.setHeight(height);
-        recommendationVO.setWeight(weight);
-        recommendationVO.setBmi(bmi);
-        
-        return ApiResult.success(recommendationVO);
+        try {
+            // 检查返回的字符串是否为空
+            if (modelResponse == null || modelResponse.trim().isEmpty()) {
+                log.error("混元模型返回的结果为空");
+                return ApiResult.error("生成营养推荐失败: 模型返回结果为空");
+            }
+            
+            log.info("原始响应内容: {}", modelResponse);
+            
+            // 解析纯文本格式的返回结果
+            int calories = 2000; // 默认值
+            BigDecimal protein = BigDecimal.valueOf(0);
+            BigDecimal carbohydrate = BigDecimal.valueOf(0);
+            BigDecimal fat = BigDecimal.valueOf(0);
+            BigDecimal fiber = BigDecimal.valueOf(0);
+            BigDecimal sodium = BigDecimal.valueOf(0);
+            List<String> suggestions = new ArrayList<>();
+            List<String> notes = new ArrayList<>();
+            
+            // 使用正则表达式提取数值
+            Pattern caloriesPattern = Pattern.compile("热量：\\s*(\\d+)");
+            Pattern proteinPattern = Pattern.compile("蛋白质：\\s*(\\d+(\\.\\d+)?)");
+            Pattern carbohydratePattern = Pattern.compile("碳水化合物：\\s*(\\d+(\\.\\d+)?)");
+            Pattern fatPattern = Pattern.compile("脂肪：\\s*(\\d+(\\.\\d+)?)");
+            Pattern fiberPattern = Pattern.compile("膳食纤维：\\s*(\\d+(\\.\\d+)?)");
+            Pattern sodiumPattern = Pattern.compile("钠：\\s*(\\d+(\\.\\d+)?)");
+            
+            // 提取营养数据
+            try {
+                Matcher caloriesMatcher = caloriesPattern.matcher(modelResponse);
+                if (caloriesMatcher.find()) {
+                    calories = Integer.parseInt(caloriesMatcher.group(1));
+                    log.info("提取到热量: {}", calories);
+                } else {
+                    log.warn("未找到热量数据，使用默认值: {}", calories);
+                }
+                
+                Matcher proteinMatcher = proteinPattern.matcher(modelResponse);
+                if (proteinMatcher.find()) {
+                    protein = new BigDecimal(proteinMatcher.group(1)).setScale(2, RoundingMode.HALF_UP);
+                    log.info("提取到蛋白质: {}", protein);
+                } else {
+                    log.warn("未找到蛋白质数据，使用默认值: {}", protein);
+                }
+                
+                Matcher carbohydrateMatcher = carbohydratePattern.matcher(modelResponse);
+                if (carbohydrateMatcher.find()) {
+                    carbohydrate = new BigDecimal(carbohydrateMatcher.group(1)).setScale(2, RoundingMode.HALF_UP);
+                    log.info("提取到碳水化合物: {}", carbohydrate);
+                } else {
+                    log.warn("未找到碳水化合物数据，使用默认值: {}", carbohydrate);
+                }
+                
+                Matcher fatMatcher = fatPattern.matcher(modelResponse);
+                if (fatMatcher.find()) {
+                    fat = new BigDecimal(fatMatcher.group(1)).setScale(2, RoundingMode.HALF_UP);
+                    log.info("提取到脂肪: {}", fat);
+                } else {
+                    log.warn("未找到脂肪数据，使用默认值: {}", fat);
+                }
+                
+                Matcher fiberMatcher = fiberPattern.matcher(modelResponse);
+                if (fiberMatcher.find()) {
+                    fiber = new BigDecimal(fiberMatcher.group(1)).setScale(2, RoundingMode.HALF_UP);
+                    log.info("提取到膳食纤维: {}", fiber);
+                } else {
+                    log.warn("未找到膳食纤维数据，使用默认值: {}", fiber);
+                }
+                
+                Matcher sodiumMatcher = sodiumPattern.matcher(modelResponse);
+                if (sodiumMatcher.find()) {
+                    sodium = new BigDecimal(sodiumMatcher.group(1)).setScale(2, RoundingMode.HALF_UP);
+                    log.info("提取到钠: {}", sodium);
+                } else {
+                    log.warn("未找到钠数据，使用默认值: {}", sodium);
+                }
+            } catch (Exception e) {
+                log.error("提取营养数据时出错", e);
+                // 继续使用默认值
+            }
+            
+            // 提取饮食建议
+            Pattern suggestionPattern = Pattern.compile("饮食建议：\\s*\\n((?:(?:\\d+\\.\\s*.*\\n)+))");
+            Matcher suggestionMatcher = suggestionPattern.matcher(modelResponse);
+            if (suggestionMatcher.find()) {
+                String suggestionsText = suggestionMatcher.group(1);
+                String[] suggestionLines = suggestionsText.split("\\n");
+                for (String line : suggestionLines) {
+                    line = line.trim();
+                    if (!line.isEmpty()) {
+                        // 去掉行首的数字和点
+                        line = line.replaceAll("^\\d+\\.\\s*", "");
+                        suggestions.add(line);
+                    }
+                }
+                log.info("提取到{}条饮食建议", suggestions.size());
+            } else {
+                log.warn("未找到饮食建议");
+            }
+            
+            // 提取注意事项
+            Pattern notesPattern = Pattern.compile("注意事项：\\s*\\n((?:(?:\\d+\\.\\s*.*\\n?)+))");
+            Matcher notesMatcher = notesPattern.matcher(modelResponse);
+            if (notesMatcher.find()) {
+                String notesText = notesMatcher.group(1);
+                String[] noteLines = notesText.split("\\n");
+                for (String line : noteLines) {
+                    line = line.trim();
+                    if (!line.isEmpty()) {
+                        // 去掉行首的数字和点
+                        line = line.replaceAll("^\\d+\\.\\s*", "");
+                        notes.add(line);
+                    }
+                }
+                log.info("提取到{}条注意事项", notes.size());
+            } else {
+                log.warn("未找到注意事项");
+            }
+            
+            // 创建营养推荐
+            NutritionRecommendation recommendation = NutritionRecommendation.builder()
+                    .userId(userId)
+                    .recommendationDate(LocalDate.now())
+                    .calories(calories)
+                    .protein(protein)
+                    .carbohydrate(carbohydrate)
+                    .fat(fat)
+                    .fiber(fiber)
+                    .sodium(sodium)
+                    .recommendationType("DAILY")
+                    .notes("基于混元模型生成的营养推荐: " + String.join("; ", notes))
+                    .createTime(LocalDateTime.now())
+                    .build();
+            
+            // 保存营养推荐
+            nutritionRecommendationMapper.insert(recommendation);
+            
+            // 构建返回VO
+            NutritionRecommendationVO recommendationVO = new NutritionRecommendationVO();
+            BeanUtils.copyProperties(recommendation, recommendationVO);
+            recommendationVO.setUserName(user.getUserName());
+            recommendationVO.setGender(user.getGender());
+            recommendationVO.setAge(age);
+            recommendationVO.setHeight(height);
+            recommendationVO.setWeight(weight);
+            recommendationVO.setBmi(bmi);
+            
+            return ApiResult.success(recommendationVO);
+        } catch (Exception e) {
+            log.error("解析混元模型返回结果失败", e);
+            return ApiResult.error("解析营养推荐数据失败: " + e.getMessage());
+        }
     }
 
     /**
