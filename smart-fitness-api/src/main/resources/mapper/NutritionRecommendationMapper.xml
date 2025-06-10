@@ -27,7 +27,7 @@
     </sql>
 
     <insert id="insert" parameterType="cn.foldedj.pojo.entity.NutritionRecommendation" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO NUTRITION_RECOMMENDATION (
+        INSERT INTO SYSDBA.NUTRITION_RECOMMENDATION (
             ID, USER_ID, RECOMMENDATION_DATE, CALORIES, PROTEIN, CARBOHYDRATE, FAT, FIBER, SODIUM, RECOMMENDATION_TYPE, NOTES, CREATE_TIME
         ) VALUES (
             SYSDBA.NUTRITION_RECOMMENDATION_SEQ.NEXTVAL, #{userId}, #{recommendationDate}, #{calories}, #{protein}, #{carbohydrate}, #{fat}, #{fiber}, #{sodium}, #{recommendationType}, #{notes}, #{createTime}
@@ -35,7 +35,7 @@
     </insert>
 
     <update id="update" parameterType="cn.foldedj.pojo.entity.NutritionRecommendation">
-        UPDATE NUTRITION_RECOMMENDATION
+        UPDATE SYSDBA.NUTRITION_RECOMMENDATION
         <set>
             <if test="userId != null">USER_ID = #{userId},</if>
             <if test="recommendationDate != null">RECOMMENDATION_DATE = #{recommendationDate},</if>
@@ -52,7 +52,7 @@
     </update>
 
     <delete id="batchDelete">
-        DELETE FROM NUTRITION_RECOMMENDATION
+        DELETE FROM SYSDBA.NUTRITION_RECOMMENDATION
         WHERE ID IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
@@ -61,11 +61,11 @@
 
     <select id="query" resultMap="VOResultMap">
         SELECT
-        r.<include refid="Base_Column_List"/>,
+        r.ID, r.USER_ID, r.RECOMMENDATION_DATE, r.CALORIES, r.PROTEIN, r.CARBOHYDRATE, r.FAT, r.FIBER, r.SODIUM, r.RECOMMENDATION_TYPE, r.NOTES, r.CREATE_TIME,
         u.USER_NAME,
         u.GENDER
-        FROM NUTRITION_RECOMMENDATION r
-        LEFT JOIN USER u ON r.USER_ID = u.ID
+        FROM SYSDBA.NUTRITION_RECOMMENDATION r
+        LEFT JOIN SYSDBA."USER" u ON r.USER_ID = u.ID
         <where>
             <if test="userId != null">
                 AND r.USER_ID = #{userId}
@@ -84,17 +84,19 @@
             </if>
         </where>
         ORDER BY r.RECOMMENDATION_DATE DESC, r.CREATE_TIME DESC
-        <if test="pageSize != null and pageSize &gt; 0">
-            LIMIT #{pageSize}
-            <if test="pageNum != null">
-                OFFSET #{pageNum}
+        <if test="size != null and size &gt; 0">
+            <if test="current != null">
+                OFFSET #{current} ROWS FETCH NEXT #{size} ROWS ONLY
+            </if>
+            <if test="current == null">
+                OFFSET 0 ROWS FETCH NEXT #{size} ROWS ONLY
             </if>
         </if>
     </select>
 
     <select id="queryCount" resultType="java.lang.Integer">
         SELECT COUNT(*)
-        FROM NUTRITION_RECOMMENDATION r
+        FROM SYSDBA.NUTRITION_RECOMMENDATION r
         <where>
             <if test="userId != null">
                 AND r.USER_ID = #{userId}
@@ -116,11 +118,23 @@
 
     <select id="getById" resultMap="VOResultMap">
         SELECT
-        r.<include refid="Base_Column_List"/>,
+        r.ID, r.USER_ID, r.RECOMMENDATION_DATE, r.CALORIES, r.PROTEIN, r.CARBOHYDRATE, r.FAT, r.FIBER, r.SODIUM, r.RECOMMENDATION_TYPE, r.NOTES, r.CREATE_TIME,
         u.USER_NAME,
         u.GENDER
-        FROM NUTRITION_RECOMMENDATION r
-        LEFT JOIN USER u ON r.USER_ID = u.ID
+        FROM SYSDBA.NUTRITION_RECOMMENDATION r
+        LEFT JOIN SYSDBA."USER" u ON r.USER_ID = u.ID
         WHERE r.ID = #{id}
+    </select>
+
+    <select id="getLatestByUserId" resultMap="VOResultMap">
+        SELECT
+        r.ID, r.USER_ID, r.RECOMMENDATION_DATE, r.CALORIES, r.PROTEIN, r.CARBOHYDRATE, r.FAT, r.FIBER, r.SODIUM, r.RECOMMENDATION_TYPE, r.NOTES, r.CREATE_TIME,
+        u.USER_NAME,
+        u.GENDER
+        FROM SYSDBA.NUTRITION_RECOMMENDATION r
+        LEFT JOIN SYSDBA."USER" u ON r.USER_ID = u.ID
+        WHERE r.USER_ID = #{userId}
+        ORDER BY r.CREATE_TIME DESC
+        OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
     </select>
 </mapper>

@@ -3,9 +3,7 @@ package cn.foldedj.service;
 import cn.foldedj.pojo.api.Result;
 import cn.foldedj.pojo.dto.query.extend.NutritionRecommendationQueryDto;
 import cn.foldedj.pojo.entity.NutritionRecommendation;
-import cn.foldedj.pojo.entity.UserNutritionTarget;
 import cn.foldedj.pojo.vo.NutritionRecommendationVO;
-import cn.foldedj.pojo.vo.UserNutritionTargetVO;
 
 import java.util.List;
 
@@ -14,21 +12,7 @@ import java.util.List;
  */
 public interface NutritionService {
 
-    /**
-     * 根据用户ID获取用户营养目标
-     *
-     * @param userId 用户ID
-     * @return Result<UserNutritionTargetVO> 用户营养目标
-     */
-    Result<UserNutritionTargetVO> getUserNutritionTarget(Integer userId);
 
-    /**
-     * 保存或更新用户营养目标
-     *
-     * @param userNutritionTarget 用户营养目标
-     * @return Result<Void> 操作结果
-     */
-    Result<Void> saveOrUpdateUserNutritionTarget(UserNutritionTarget userNutritionTarget);
 
     /**
      * 根据用户ID生成营养推荐
@@ -69,4 +53,12 @@ public interface NutritionService {
      * @return Result<Void> 操作结果
      */
     Result<Void> deleteNutritionRecommendations(List<Integer> ids);
+
+    /**
+     * 获取用户最新的营养推荐
+     *
+     * @param userId 用户ID
+     * @return Result<NutritionRecommendationVO> 最新的营养推荐
+     */
+    Result<NutritionRecommendationVO> getLatestNutritionRecommendation(Integer userId);
 }

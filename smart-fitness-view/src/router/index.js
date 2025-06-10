@@ -175,15 +175,14 @@ const routes = [
         meta: { title: '饮食记录' }
       },
       {
-        path: '/user/nutrition-target',
-        name: '营养目标',
-        component: () => import('@/views/user/NutritionTarget.vue'),
+        path: '/user/nutrition-recommendation',
+        name: '营养推荐',
+        component: () => import('@/views/user/NutritionRecommendation.vue'),
         meta: { 
           requireAuth: true,
-          title: '营养目标' 
+          title: '营养推荐' 
         }
       },
-
     ]
   }
 ];

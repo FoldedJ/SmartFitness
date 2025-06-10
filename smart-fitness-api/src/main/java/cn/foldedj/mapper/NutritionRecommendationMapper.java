@@ -61,4 +61,12 @@ public interface NutritionRecommendationMapper {
      * @return 营养推荐
      */
     NutritionRecommendationVO getById(@Param("id") Integer id);
+
+    /**
+     * 获取用户最新的营养推荐
+     *
+     * @param userId 用户ID
+     * @return 最新的营养推荐
+     */
+    NutritionRecommendationVO getLatestByUserId(@Param("userId") Integer userId);
 }

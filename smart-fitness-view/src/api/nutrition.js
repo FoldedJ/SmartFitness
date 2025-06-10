@@ -1,40 +1,6 @@
 import request from '@/utils/request';
 
-// 获取当前用户的营养目标
-export function getNutritionTarget() {
-  return request({
-    url: '/nutrition/target',
-    method: 'get'
-  });
-}
 
-// 保存或更新当前用户的营养目标
-export function saveNutritionTarget(data) {
-  return request({
-    url: '/nutrition/target/save',
-    method: 'post',
-    data
-  });
-}
-
-// 获取指定用户的营养目标
-export function getUserNutritionTarget(userId) {
-  return request({
-    url: `/nutrition/target/${userId}`,
-    method: 'get'
-  });
-}
-
-// 保存或更新指定用户的营养目标
-export function saveUserNutritionTarget(userId, data) {
-  // 确保data中包含userId
-  const targetData = { ...data, userId };
-  return request({
-    url: '/nutrition/target/save',
-    method: 'post',
-    data: targetData
-  });
-}
 
 // 为当前用户生成营养推荐
 export function generateNutritionRecommendation() {
@@ -111,5 +77,21 @@ export function deleteUserNutritionRecommendation(userId, id) {
   return request({
     url: `/nutrition/recommendation/${userId}/${id}`,
     method: 'delete'
+  });
+}
+
+// 将最新的营养推荐设置为当前营养目标
+export function setLatestRecommendationAsTarget() {
+  return request({
+    url: '/nutrition/recommendation/set-as-target',
+    method: 'get'
+  });
+}
+
+// 获取当前用户最新的营养推荐
+export function getLatestNutritionRecommendation() {
+  return request({
+    url: '/nutrition/recommendation/latest',
+    method: 'get'
   });
 }

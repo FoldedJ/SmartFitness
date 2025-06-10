@@ -85,18 +85,7 @@ export function queryNutritionRecommendations(data) {
   });
 }
 
-/**
- * 获取当前用户的营养推荐历史
- * @param {Object} data 查询条件
- * @returns {Promise<any>}
- */
-export function getNutritionRecommendationHistory(data) {
-  return request({
-    url: '/nutrition/recommendation/history',
-    method: 'post',
-    data
-  });
-}
+
 
 /**
  * 根据ID获取营养推荐

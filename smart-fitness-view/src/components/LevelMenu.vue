@@ -41,13 +41,10 @@
                                 @click.native="resetPwd">修改密码</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-upload"
                                 @click.native="healthDataRecord">指标记录</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-food"
-                                @click.native="dietRecord">饮食记录</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-data-analysis"
-                                @click.native="nutritionTarget">营养目标</el-dropdown-item>
-
                             <el-dropdown-item icon="el-icon-edit-outline"
                                 @click.native="publishNews">发布</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-food"
+                                @click.native="nutritionRecommendation">营养推荐</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-bell"
                                 @click.native="messageCenter">
                                 消息通知
@@ -120,15 +117,6 @@ export default {
         loginOut() {
             this.$emit('eventListener', 'loginOut');
         },
-        // 记录饮食，传回父组件处理
-        dietRecord() {
-            this.$emit('eventListener', 'dietRecord');
-        },
-        // 营养目标页面
-        nutritionTarget() {
-            this.$router.push('/user/nutrition-target');
-        },
-
         // 记录个人健康指标，传回父组件处理
         healthDataRecord() {
             this.$emit('eventListener', 'healthDataRecord');
@@ -136,6 +124,10 @@ export default {
         // 发布资讯，传回父组件处理
         publishNews() {
             this.$router.push('/publish-news');
+        },
+        // 营养推荐，跳转到营养推荐页面
+        nutritionRecommendation() {
+            this.$router.push('/user/nutrition-recommendation');
         },
         async loadMsgCount() {
             const userInfo = sessionStorage.getItem('userInfo');

@@ -257,6 +257,7 @@ export default {
   },
   mounted() {
     this.getUserInfo();
+
     this.loadDietRecords();
   },
   methods: {
@@ -267,6 +268,8 @@ export default {
         this.userInfo = JSON.parse(userInfoStr);
       }
     },
+
+
 
     // 加载饮食记录
     async loadDietRecords() {

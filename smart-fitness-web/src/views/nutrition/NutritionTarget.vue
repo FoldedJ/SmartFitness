@@ -229,17 +229,19 @@ export default defineComponent({
     
     // 生成营养推荐
     const generateRecommendation = async () => {
+      // 先显示一个提示，告知用户生成推荐可能需要较长时间
+      message.info('正在生成营养推荐，这可能需要一些时间，请耐心等待...');
       try {
         const res = await generateNutritionRecommendation();
         if (res.code === 200 && res.data) {
           recommendationData.value = res.data;
           recommendationModalVisible.value = true;
         } else {
-          message.error(res.msg || '生成营养推荐失败');
+          message.warning(res.msg || '生成营养推荐暂时失败，请稍后重试');
         }
       } catch (error) {
         console.error('生成营养推荐出错:', error);
-        message.error('生成营养推荐失败');
+        message.warning('生成营养推荐暂时失败，请稍后重试');
       }
     };
     

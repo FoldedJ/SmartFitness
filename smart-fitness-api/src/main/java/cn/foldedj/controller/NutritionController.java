@@ -1,12 +1,12 @@
 package cn.foldedj.controller;
 
 import cn.foldedj.context.LocalThreadHolder;
+import cn.foldedj.mapper.NutritionRecommendationMapper;
+import cn.foldedj.pojo.api.ApiResult;
 import cn.foldedj.pojo.api.Result;
 import cn.foldedj.pojo.dto.query.extend.NutritionRecommendationQueryDto;
 import cn.foldedj.pojo.entity.NutritionRecommendation;
-import cn.foldedj.pojo.entity.UserNutritionTarget;
 import cn.foldedj.pojo.vo.NutritionRecommendationVO;
-import cn.foldedj.pojo.vo.UserNutritionTargetVO;
 import cn.foldedj.service.NutritionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,41 +28,10 @@ public class NutritionController {
     @Resource
     private NutritionService nutritionService;
 
-    /**
-     * 获取当前用户的营养目标
-     *
-     * @return Result<UserNutritionTargetVO> 用户营养目标
-     */
-    @GetMapping("/target")
-    @ApiOperation("获取当前用户的营养目标")
-    public Result<UserNutritionTargetVO> getUserNutritionTarget() {
-        Integer userId = LocalThreadHolder.getUserId();
-        return nutritionService.getUserNutritionTarget(userId);
-    }
+    @Resource
+    private NutritionRecommendationMapper nutritionRecommendationMapper;
 
-    /**
-     * 获取指定用户的营养目标
-     *
-     * @param userId 用户ID
-     * @return Result<UserNutritionTargetVO> 用户营养目标
-     */
-    @GetMapping("/target/{userId}")
-    @ApiOperation("获取指定用户的营养目标")
-    public Result<UserNutritionTargetVO> getUserNutritionTargetByUserId(@PathVariable Integer userId) {
-        return nutritionService.getUserNutritionTarget(userId);
-    }
 
-    /**
-     * 保存或更新用户营养目标
-     *
-     * @param userNutritionTarget 用户营养目标
-     * @return Result<Void> 操作结果
-     */
-    @PostMapping("/target/save")
-    @ApiOperation("保存或更新用户营养目标")
-    public Result<Void> saveOrUpdateUserNutritionTarget(@RequestBody UserNutritionTarget userNutritionTarget) {
-        return nutritionService.saveOrUpdateUserNutritionTarget(userNutritionTarget);
-    }
 
     /**
      * 为当前用户生成营养推荐
@@ -137,4 +106,17 @@ public class NutritionController {
     public Result<Void> deleteNutritionRecommendations(@RequestBody List<Integer> ids) {
         return nutritionService.deleteNutritionRecommendations(ids);
     }
+
+    /**
+     * 获取当前用户最新的营养推荐
+     *
+     * @return Result<NutritionRecommendationVO> 最新的营养推荐
+     */
+    @GetMapping("/recommendation/latest")
+    @ApiOperation("获取当前用户最新的营养推荐")
+    public Result<NutritionRecommendationVO> getLatestNutritionRecommendation() {
+        Integer userId = LocalThreadHolder.getUserId();
+        return nutritionService.getLatestNutritionRecommendation(userId);
+    }
+
 }

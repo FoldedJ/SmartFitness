@@ -1,7 +1,7 @@
 package cn.foldedj.service.impl;
 
 import cn.foldedj.config.TencentHunyuanConfig;
-import cn.foldedj.mapper.UserNutritionTargetMapper;
+
 import cn.foldedj.pojo.api.ApiResult;
 import cn.foldedj.pojo.api.Result;
 import cn.foldedj.service.TencentHunyuanService;
@@ -28,8 +28,7 @@ public class TencentHunyuanServiceImpl implements TencentHunyuanService {
     @Resource
     private TencentHunyuanConfig hunyuanConfig;
     
-    @Resource
-    private UserNutritionTargetMapper userNutritionTargetMapper;
+
 
     @Override
     public Result<String> generateNutritionRecommendation(Double height, Double weight, Integer age, String gender) {
@@ -188,7 +187,8 @@ public class TencentHunyuanServiceImpl implements TencentHunyuanService {
      * @return 包含身高和体重的数组，[0]为身高，[1]为体重
      */
     private Double[] getUserLatestHeightAndWeight(Integer userId) {
-        Map<String, Object> heightAndWeight = userNutritionTargetMapper.getUserLatestHeightAndWeight(userId);
+        // TODO: 实现从其他数据源获取身高体重的逻辑
+        Map<String, Object> heightAndWeight = null;
         log.info("TencentHunyuanServiceImpl - 用户ID: {} 的身高体重数据: {}", userId, heightAndWeight);
         
         Double height = null;
