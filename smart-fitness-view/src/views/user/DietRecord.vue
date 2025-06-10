@@ -25,37 +25,53 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <div class="nutrition-item">
-              <div class="nutrition-value">{{ totalNutrition.calories }}</div>
+              <div class="nutrition-value">{{ totalNutrition.calories }}/{{ nutritionTargets.calories }}</div>
               <div class="nutrition-label">热量 (kcal)</div>
               <div class="nutrition-progress">
-                <el-progress :percentage="getProgressPercentage('calories')" :show-text="false"></el-progress>
+                <el-progress 
+                  :percentage="getProgressPercentage('calories')" 
+                  :show-text="false"
+                  :color="getProgressColor('calories')">
+                </el-progress>
               </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="nutrition-item">
-              <div class="nutrition-value">{{ totalNutrition.protein.toFixed(1) }}</div>
+              <div class="nutrition-value">{{ totalNutrition.protein.toFixed(1) }}/{{ nutritionTargets.protein.toFixed(1) }}</div>
               <div class="nutrition-label">蛋白质 (g)</div>
               <div class="nutrition-progress">
-                <el-progress :percentage="getProgressPercentage('protein')" :show-text="false"></el-progress>
+                <el-progress 
+                  :percentage="getProgressPercentage('protein')" 
+                  :show-text="false"
+                  :color="getProgressColor('protein')">
+                </el-progress>
               </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="nutrition-item">
-              <div class="nutrition-value">{{ totalNutrition.carbohydrate.toFixed(1) }}</div>
+              <div class="nutrition-value">{{ totalNutrition.carbohydrate.toFixed(1) }}/{{ nutritionTargets.carbohydrate.toFixed(1) }}</div>
               <div class="nutrition-label">碳水化合物 (g)</div>
               <div class="nutrition-progress">
-                <el-progress :percentage="getProgressPercentage('carbohydrate')" :show-text="false"></el-progress>
+                <el-progress 
+                  :percentage="getProgressPercentage('carbohydrate')" 
+                  :show-text="false"
+                  :color="getProgressColor('carbohydrate')">
+                </el-progress>
               </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="nutrition-item">
-              <div class="nutrition-value">{{ totalNutrition.fat.toFixed(1) }}</div>
+              <div class="nutrition-value">{{ totalNutrition.fat.toFixed(1) }}/{{ nutritionTargets.fat.toFixed(1) }}</div>
               <div class="nutrition-label">脂肪 (g)</div>
               <div class="nutrition-progress">
-                <el-progress :percentage="getProgressPercentage('fat')" :show-text="false"></el-progress>
+                <el-progress 
+                  :percentage="getProgressPercentage('fat')" 
+                  :show-text="false"
+                  :color="getProgressColor('fat')">
+                </el-progress>
               </div>
             </div>
           </el-col>
@@ -220,6 +236,7 @@
 <script>
 import request from "@/utils/request.js";
 import MealRecordList from "@/components/MealRecordList.vue";
+import { getLatestNutritionRecommendation } from '@/api/nutrition';
 
 export default {
   name: "DietRecord",
@@ -238,10 +255,10 @@ export default {
         fat: 0
       },
       nutritionTargets: {
-        calories: 2000,
-        protein: 60,
-        carbohydrate: 250,
-        fat: 70
+        calories: 0,
+        protein: 0,
+        carbohydrate: 0,
+        fat: 0
       },
       addDietDialogVisible: false,
       dietForm: {
@@ -257,8 +274,8 @@ export default {
   },
   mounted() {
     this.getUserInfo();
-
     this.loadDietRecords();
+    this.loadLatestNutritionRecommendation();
   },
   methods: {
     // 获取用户信息
@@ -269,7 +286,23 @@ export default {
       }
     },
 
-
+    // 加载最新的营养推荐
+    async loadLatestNutritionRecommendation() {
+      try {
+        const response = await getLatestNutritionRecommendation();
+        if (response.data.code === 200 && response.data.data) {
+          const recommendation = response.data.data;
+          this.nutritionTargets = {
+            calories: recommendation.calories || 0,
+            protein: parseFloat(recommendation.protein) || 0,
+            carbohydrate: parseFloat(recommendation.carbohydrate) || 0,
+            fat: parseFloat(recommendation.fat) || 0
+          };
+        }
+      } catch (error) {
+        console.error('加载营养推荐失败:', error);
+      }
+    },
 
     // 加载饮食记录
     async loadDietRecords() {
@@ -315,6 +348,13 @@ export default {
       const current = this.totalNutrition[nutrient];
       const target = this.nutritionTargets[nutrient];
       return Math.min(Math.round((current / target) * 100), 100);
+    },
+
+    // 获取进度条颜色
+    getProgressColor(nutrient) {
+      const current = this.totalNutrition[nutrient];
+      const target = this.nutritionTargets[nutrient];
+      return current > target ? '#F56C6C' : '#409EFF';
     },
 
     // 根据餐食类型获取记录

@@ -3,6 +3,13 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>营养推荐</span>
+        <el-button 
+          style="float: right; padding: 3px 0" 
+          type="text"
+          :loading="loading"
+          @click="generateRecommendation">
+          生成推荐
+        </el-button>
       </div>
       
       <!-- 当前推荐 -->
