@@ -105,31 +105,6 @@
                     @click="updateUserPwd">修改</el-button>
             </span>
         </el-dialog>
-            <div style="padding: 10px 20px;">
-                <el-row v-for="(checkFood, index) in isCheckFood" :key="index">
-                    <el-col :span="10">
-                        <img style="width: 100%;height: 100px;border-radius: 5px;" :src="checkFood.cover" />
-                    </el-col>
-                    <el-col :span="14" style="padding: 0 20px;">
-                        <div>
-                            <input class="modelInput" type="text" v-model="checkFood.mgValue" placeholder="克数">
-                            <span>克</span>
-                        </div>
-                        <div style="margin: 10px 5px;">
-                            <div style="font-size: 16px;">
-                                <span>{{ checkFood.name }} - {{ checkFood.tag }}</span>
-                            </div>
-                            <div style="margin-top: 6px;">
-                                <span class="removeFood" @click="removeFood(checkFood)">
-                                    <i class="el-icon-circle-close"></i>
-                                    移除
-                                </span>
-                            </div>
-                        </div>
-                    </el-col>
-                </el-row>
-            </div>
-        </el-dialog>
         <!-- 记录健康指标 -->
         <el-dialog :visible.sync="healthModelConfigDialog" width="28%" :show-close="false">
             <div slot="title">
@@ -184,10 +159,12 @@
         </el-dialog>
     </div>
 </template>
+
 <script>
 import { clearToken } from "@/utils/storage.js";
 import router from "@/router";
 import UserMenu from '@/components/LevelMenu.vue';
+
 export default {
     name: "UserMain",
     components: {
@@ -318,13 +295,15 @@ export default {
         eventListener(event) {
             // 个人中心
             if (event === 'center') {
-                this.dialogOperaion = !this.dialogOperaion;
+                this.dialogOperaion = true;
+                this.data = JSON.parse(JSON.stringify(this.userInfo));
             }
             // 密码重置
             else if (event === 'resetPwd') {
                 this.dialogRetPwdOperaion = true;
-                // 搜索页搜索
-            } else if (event === 'search-detail') {
+            }
+            // 搜索页搜索
+            else if (event === 'search-detail') {
                 this.$router.push('/search-detail');
             }
             // 退出登录
@@ -333,34 +312,19 @@ export default {
             }
             // 健康指标记录
             else if (event === 'healthDataRecord') {
-                this.$router.push('/record');
+                this.healthModelConfigDialog = true;
             }
             // 饮食记录
             else if (event === 'dietRecord') {
                 this.$router.push('/user/diet-record');
             }
         },
-        removeFood(food) {
-            // 清空输入项
-            food.mgValue = '';
-            this.isCheckFood = this.isCheckFood.filter(item => item.id !== food.id);
-        },
         removeHealthModel(healthModel) {
             // 清空输入项
             healthModel.input = '';
             this.isCheckHealthModelConfig = this.isCheckHealthModelConfig.filter(item => item.id !== healthModel.id);
         },
-        foodChange() {
-            const food = this.foodList[this.selecedFoodIndex - 1];
-            const exists = this.isCheckFood.some(item => item.id === food.id);
-            // 如果不存在，则添加新选的菜单
-            if (!exists) {
-                this.isCheckFood.unshift(food);
-            } else {
-                console.log("菜谱已经添加");
-            }
-        },
-        // 提交饮食记录
+        // 提交健康指标记录
         async addUserHealthHistory() {
             const healthModels = this.isCheckHealthModelConfig.map(entity => {
                 return {
@@ -386,32 +350,6 @@ export default {
                 console.error(`记录健康指标异常`, e);
             }
         },
-        // 提交饮食记录
-        async addDietHistory() {
-            const foodIds = this.isCheckFood.map(entity => entity.id).join(",");
-            const foodNum = this.isCheckFood.map(entity => entity.mgValue).join(",");
-            const diet = {
-                foodIds: foodIds,
-                foodNum: foodNum
-            }
-            try {
-                const response = await this.$axios.post(`/diet/save`, diet);
-                const { data } = response;
-                if (data.code === 200) {
-                    this.dietDialog = false;
-                    this.isCheckFood = [];
-                    this.$swal.fire({
-                        title: '记录饮食，拥抱生活',
-                        text: data.msg,
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
-                }
-            } catch (e) {
-                console.error(`饮食新增异常：`, e);
-            }
-        },
         async loadHealthModelConfigList() {
             try {
                 const response = await this.$axios.post(`/health-model-config/list`, {});
@@ -419,15 +357,6 @@ export default {
                 this.healthModelConfig = data.data;
             } catch (e) {
                 console.error(`查询健康配置异常：`, e);
-            }
-        },
-        async loadFoodList() {
-            try {
-                const response = await this.$axios.post(`/food/list`, {});
-                const { data } = response;
-                this.foodList = data.data;
-            } catch (e) {
-                console.error(`查询饮食配置异常：`, e);
             }
         },
         async loginOutOperation() {
@@ -479,6 +408,7 @@ export default {
     },
 };
 </script>
+
 <style scoped lang="scss">
 #nutrition-select {
     margin: 10px;
