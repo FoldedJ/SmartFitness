@@ -19,4 +19,24 @@ module.exports = {
             errors: false
         },
     },
+    configureWebpack: config => {
+        const webpack = require('webpack');
+        return {
+            plugins: [
+                new webpack.ProvidePlugin({
+                    process: 'process/browser',
+                    Buffer: ['buffer', 'Buffer'],
+                }),
+            ],
+            module: {
+                rules: [
+                    {
+                        test: /\.mjs$/,
+                        include: /node_modules/,
+                        type: 'javascript/auto'
+                    }
+                ]
+            }
+        };
+    },
 }

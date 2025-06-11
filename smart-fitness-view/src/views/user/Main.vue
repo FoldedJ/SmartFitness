@@ -7,6 +7,7 @@
         <div class="content-container">
             <router-view class="route-container"></router-view>
         </div>
+
         <!-- 个人中心 -->
         <el-dialog :show-close="false" :visible.sync="dialogOperaion" width="26%">
             <div slot="title" style="padding: 25px 0 0 20px;">
@@ -164,6 +165,7 @@
 import { clearToken } from "@/utils/storage.js";
 import router from "@/router";
 import UserMenu from '@/components/LevelMenu.vue';
+
 
 export default {
     name: "UserMain",
