@@ -39,20 +39,24 @@
             </el-row>
         </el-row>
 
+        <!-- 添加悬浮对话窗口组件，不再传递workflowId属性 -->
+        <ChatWindow />
     </div>
 </template>
 <script>
 import TagLine from "@/components/TagLine"
 import Banner from "@/components/Banner"
+import ChatWindow from "@/components/ChatWindow"
 import { timeAgo } from "@/utils/data"
 export default {
-    components: { TagLine, Banner },
+    components: { TagLine, Banner, ChatWindow },
     data() {
         return {
             tagsList: [], // 标签列表
             newsList: [], // 健康资讯列表
             newsTopList: [], // 推荐的健康资讯数据列表
             newQueryDto: { tagId: null },
+            // 移除cozeWorkflowId属性
         }
     },
     created() {
