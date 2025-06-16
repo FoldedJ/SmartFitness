@@ -1,13 +1,18 @@
 package cn.foldedj.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +24,16 @@ import com.coze.openapi.service.auth.TokenAuth;
 import com.coze.openapi.service.service.CozeAPI;
 
 import cn.foldedj.config.CozeConfig;
+import cn.foldedj.context.LocalThreadHolder;
+import cn.foldedj.mapper.UserHealthMapper;
+import cn.foldedj.mapper.UserMapper;
 import cn.foldedj.pojo.api.Result;
 import cn.foldedj.pojo.dto.DietSaveDTO;
 import cn.foldedj.pojo.dto.query.extend.FoodQueryDto;
+import cn.foldedj.pojo.dto.query.extend.UserHealthQueryDto;
+import cn.foldedj.pojo.entity.User;
 import cn.foldedj.pojo.vo.FoodVO;
+import cn.foldedj.pojo.vo.UserHealthVO;
 import cn.foldedj.service.CozeService;
 import cn.foldedj.service.FoodService;
 import cn.foldedj.service.UserFoodRecordService;
@@ -44,6 +55,12 @@ public class CozeServiceImpl implements CozeService {
     @Autowired
     private UserFoodRecordService userFoodRecordService;
     
+    @Resource
+    private UserMapper userMapper;
+    
+    @Resource
+    private UserHealthMapper userHealthMapper;
+    
     /**
      * 执行Coze工作流
      * 
@@ -55,6 +72,16 @@ public class CozeServiceImpl implements CozeService {
     public String executeWorkflow(String workflowId, Map<String, Object> parameters) {
         try {
             log.info("执行Coze工作流，workflowId: {}, 参数: {}", workflowId, parameters);
+            
+            // 获取用户输入
+            String originalInput = (String) parameters.get("input");
+            
+            // 获取当前用户信息并添加到输入中
+            String enhancedInput = addUserInfoToInput(originalInput);
+            
+            // 更新参数中的input
+            parameters.put("input", enhancedInput);
+            log.info("增强后的输入: {}", enhancedInput);
             
             // 从环境变量获取Token
             String token = System.getenv("COZE_API_TOKEN");
@@ -73,11 +100,11 @@ public class CozeServiceImpl implements CozeService {
                 baseURL = cozeConfig.getBaseUrl();
             }
             
-            // 初始化Coze客户端，严格按照示例代码设置
+            // 初始化Coze客户端，设置更长的超时时间
             CozeAPI coze = new CozeAPI.Builder()
                     .baseURL(baseURL)
                     .auth(authCli)
-                    .readTimeout(10000) // 按照示例代码设置为10000毫秒
+                    .readTimeout(60000) // 将超时时间设置为60000毫秒（60秒）
                     .build();
             
             // 构建工作流请求
@@ -259,6 +286,91 @@ public class CozeServiceImpl implements CozeService {
             return 3; // 晚餐
         } else {
             return 4; // 加餐
+        }
+    }
+    
+    /**
+     * 获取用户信息并添加到输入中
+     * 
+     * @param originalInput 原始输入
+     * @return 增强后的输入
+     */
+    private String addUserInfoToInput(String originalInput) {
+        try {
+            // 获取当前用户ID
+            Integer userId = LocalThreadHolder.getUserId();
+            if (userId == null) {
+                log.warn("未获取到当前用户ID，将使用原始输入");
+                return originalInput;
+            }
+            
+            // 获取用户信息
+            User user = userMapper.getByActive(User.builder().id(userId).build());
+            if (user == null) {
+                log.warn("未找到用户信息，将使用原始输入");
+                return originalInput;
+            }
+            
+            // 获取用户身高和体重
+            Double height = null;
+            Double weight = null;
+            
+            // 直接从USER_HEALTH表查询，HEALTH_MODEL_CONFIG_ID=1为身高，HEALTH_MODEL_CONFIG_ID=2为体重
+            UserHealthQueryDto heightQueryDto = new UserHealthQueryDto();
+            heightQueryDto.setUserId(userId);
+            heightQueryDto.setHealthModelConfigId(1); // 身高的HEALTH_MODEL_CONFIG_ID为1
+            List<UserHealthVO> heightRecords = userHealthMapper.query(heightQueryDto);
+            
+            UserHealthQueryDto weightQueryDto = new UserHealthQueryDto();
+            weightQueryDto.setUserId(userId);
+            weightQueryDto.setHealthModelConfigId(2); // 体重的HEALTH_MODEL_CONFIG_ID为2
+            List<UserHealthVO> weightRecords = userHealthMapper.query(weightQueryDto);
+            
+            if (!heightRecords.isEmpty()) {
+                // 获取最新的身高记录（查询结果已按CREATE_TIME DESC排序）
+                height = Double.parseDouble(heightRecords.get(0).getValue());
+            }
+            
+            if (!weightRecords.isEmpty()) {
+                // 获取最新的体重记录（查询结果已按CREATE_TIME DESC排序）
+                weight = Double.parseDouble(weightRecords.get(0).getValue());
+            }
+            
+            // 计算年龄
+            Integer age = null;
+            if (user.getBirthDate() != null) {
+                LocalDate now = LocalDate.now();
+                Period period = Period.between(user.getBirthDate(), now);
+                age = period.getYears();
+            }
+            
+            // 构建增强的输入
+            StringBuilder enhancedInput = new StringBuilder();
+            
+            // 添加用户信息
+            if (height != null) {
+                enhancedInput.append("身高").append(height.intValue()).append("cm，");
+            }
+            
+            if (weight != null) {
+                enhancedInput.append("体重").append(weight.intValue()).append("kg，");
+            }
+            
+            if (age != null) {
+                enhancedInput.append("年龄").append(age).append("，");
+            }
+            
+            if (user.getGender() != null && !user.getGender().isEmpty()) {
+                enhancedInput.append("性别").append(user.getGender()).append("，");
+            }
+            
+            // 添加原始输入
+            enhancedInput.append(originalInput);
+            
+            return enhancedInput.toString();
+        } catch (Exception e) {
+            log.error("获取用户信息失败: {}", e.getMessage(), e);
+            return originalInput;
         }
     }
 }
