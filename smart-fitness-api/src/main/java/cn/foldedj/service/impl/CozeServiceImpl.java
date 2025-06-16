@@ -1,6 +1,13 @@
 package cn.foldedj.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +19,13 @@ import com.coze.openapi.service.auth.TokenAuth;
 import com.coze.openapi.service.service.CozeAPI;
 
 import cn.foldedj.config.CozeConfig;
+import cn.foldedj.pojo.api.Result;
+import cn.foldedj.pojo.dto.DietSaveDTO;
+import cn.foldedj.pojo.dto.query.extend.FoodQueryDto;
+import cn.foldedj.pojo.vo.FoodVO;
 import cn.foldedj.service.CozeService;
+import cn.foldedj.service.FoodService;
+import cn.foldedj.service.UserFoodRecordService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -24,6 +37,12 @@ public class CozeServiceImpl implements CozeService {
 
     @Autowired
     private CozeConfig cozeConfig;
+    
+    @Autowired
+    private FoodService foodService;
+    
+    @Autowired
+    private UserFoodRecordService userFoodRecordService;
     
     /**
      * 执行Coze工作流
@@ -89,6 +108,13 @@ public class CozeServiceImpl implements CozeService {
                             // 直接返回output字段的值
                             result = jsonObj.getString("output");
                             log.info("从JSON中提取的output值: {}", result);
+                            
+                            // 检查是否包含SQL前缀的食物记录
+                            if (result.contains("SQL")) {
+                                processFoodRecord(result);
+                                // 修改返回值，不返回SQL语句
+                                result = "我已经成功记录了您的饮食";
+                            }
                         } else {
                             // 如果没有output字段，直接返回原始字符串
                             result = outputStr;
@@ -98,6 +124,13 @@ public class CozeServiceImpl implements CozeService {
                         // 如果解析失败，直接返回原始字符串
                         log.warn("解析JSON失败，直接返回原始字符串: {}", e.getMessage());
                         result = outputStr;
+                        
+                        // 检查是否包含SQL前缀的食物记录
+                        if (result.contains("SQL")) {
+                            processFoodRecord(result);
+                            // 修改返回值，不返回SQL语句
+                            result = "我已经成功记录了您的饮食";
+                        }
                     }
                 } else if (output instanceof Map) {
                     // 如果是Map类型，尝试获取output字段
@@ -108,6 +141,13 @@ public class CozeServiceImpl implements CozeService {
                     if (outputValue != null) {
                         result = outputValue.toString();
                         log.info("从Map中提取的output值: {}", result);
+                        
+                        // 检查是否包含SQL前缀的食物记录
+                        if (result.contains("SQL")) {
+                            processFoodRecord(result);
+                            // 修改返回值，不返回SQL语句
+                            result = "我已经成功记录了您的饮食";
+                        }
                     } else {
                         // 如果没有output字段，返回整个数据的JSON字符串
                         result = JSON.toJSONString(output);
@@ -129,6 +169,96 @@ public class CozeServiceImpl implements CozeService {
         } catch (Exception e) {
             log.error("执行Coze工作流失败: {}", e.getMessage(), e);
             return "执行工作流失败: " + e.getMessage();
+        }
+    }
+    
+    /**
+     * 处理食物记录
+     * 格式："SQL食物名称，数量；SQL食物名称，数量"
+     * 
+     * @param content 包含食物记录的内容
+     */
+    private void processFoodRecord(String content) {
+        try {
+            log.info("开始处理食物记录: {}", content);
+            
+            // 解析食物记录
+            List<Long> foodIds = new ArrayList<>();
+            List<Integer> foodNums = new ArrayList<>();
+            
+            // 使用正则表达式匹配"SQL食物名称，数量"格式
+            Pattern pattern = Pattern.compile("SQL([^，,]+)[，,](\\d+)");
+            Matcher matcher = pattern.matcher(content);
+            
+            while (matcher.find()) {
+                String foodName = matcher.group(1).trim();
+                int quantity = Integer.parseInt(matcher.group(2).trim());
+                
+                log.info("解析到食物: {}, 数量: {}", foodName, quantity);
+                
+                // 查询食物ID
+                FoodQueryDto queryDto = new FoodQueryDto();
+                queryDto.setFoodName(foodName);
+                queryDto.setCurrent(1);
+                queryDto.setSize(1);
+                Result<List<FoodVO>> queryResult = foodService.query(queryDto);
+                
+                if (queryResult.isSuccess() && queryResult.getData() != null && !queryResult.getData().isEmpty()) {
+                    FoodVO food = queryResult.getData().get(0);
+                    Long foodId = food.getId().longValue();
+                    foodIds.add(foodId);
+                    foodNums.add(quantity);
+                    log.info("找到食物ID: {}", foodId);
+                } else {
+                    log.warn("未找到食物: {}, 跳过此记录", foodName);
+                }
+            }
+            
+            if (!foodIds.isEmpty()) {
+                // 根据当前时间判断餐次类型
+                Integer mealType = determineMealTypeByTime();
+                log.info("当前餐次类型: {}", mealType);
+                
+                // 创建饮食记录DTO
+                DietSaveDTO dietSaveDTO = DietSaveDTO.builder()
+                        .foodIds(foodIds)
+                        .foodNums(foodNums)
+                        .recordDate(LocalDate.now())
+                        .mealType(mealType)
+                        .build();
+                
+                // 保存饮食记录
+                cn.foldedj.pojo.api.Result<Void> saveResult = userFoodRecordService.batchSave(dietSaveDTO);
+                if (saveResult.isSuccess()) {
+                    log.info("饮食记录保存成功");
+                } else {
+                    log.error("饮食记录保存失败: {}", saveResult.getMsg());
+                }
+            } else {
+                log.warn("没有找到有效的食物记录");
+            }
+        } catch (Exception e) {
+            log.error("处理食物记录失败: {}", e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * 根据当前时间判断餐次类型
+     * 1:早餐(5:00-10:00) 2:午餐(10:00-15:00) 3:晚餐(15:00-22:00) 4:加餐(其他时间)
+     * 
+     * @return 餐次类型
+     */
+    private Integer determineMealTypeByTime() {
+        LocalTime currentTime = LocalTime.now();
+        
+        if (currentTime.isAfter(LocalTime.of(5, 0)) && currentTime.isBefore(LocalTime.of(10, 0))) {
+            return 1; // 早餐
+        } else if (currentTime.isAfter(LocalTime.of(10, 0)) && currentTime.isBefore(LocalTime.of(15, 0))) {
+            return 2; // 午餐
+        } else if (currentTime.isAfter(LocalTime.of(15, 0)) && currentTime.isBefore(LocalTime.of(22, 0))) {
+            return 3; // 晚餐
+        } else {
+            return 4; // 加餐
         }
     }
 }
