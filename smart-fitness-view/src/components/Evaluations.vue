@@ -232,31 +232,40 @@ export default {
         },
         // 点赞 或 取消点赞
         upvote(comment) {
+            // 确保使用一致的用户ID格式
+            const userId = this.userData.id.toString();
             let upvoteList = comment.upvoteList ? comment.upvoteList.split(',') : [];
-            if (upvoteList.length) {
-                // 界面反映
-                if (comment.upvoteFlag) {
-                    // 取消点赞
-                    let index = upvoteList.indexOf(this.userData.id.toString());
-                    if (index !== -1) {
-                        upvoteList.splice(index, 1); // 移除用户ID
-                    }
-                } else {
-                    // 点赞
-                    if (!upvoteList.includes(this.userData.userId.toString())) {
-                        upvoteList.push(this.userData.userId.toString()); // 添加用户ID
-                    }
+            
+            // 界面反映
+            if (comment.upvoteFlag) {
+                // 取消点赞
+                let index = upvoteList.indexOf(userId);
+                if (index !== -1) {
+                    upvoteList.splice(index, 1); // 移除用户ID
+                }
+            } else {
+                // 点赞
+                if (!upvoteList.includes(userId)) {
+                    upvoteList.push(userId); // 添加用户ID
                 }
             }
+            
             let evalustions = {
                 id: comment.id,
-                upvoteList: upvoteList.length ? upvoteList.join(',') : this.userData.id
+                upvoteList: upvoteList.join(',')
             }
             this.$axios.put(`evaluations/update`, evalustions).then(res => {
                 if (res.data.code == 200) {
                     comment.upvoteList = upvoteList.join(','); // 更新upvoteList字符串
                     comment.upvoteFlag = !comment.upvoteFlag; // 切换点赞状态标志
-                    comment.upvoteCount += 1;
+                    // 根据点赞状态更新点赞数
+                    if (comment.upvoteFlag) {
+                        // 点赞操作，点赞数+1
+                        comment.upvoteCount += 1;
+                    } else {
+                        // 取消点赞操作，点赞数-1
+                        comment.upvoteCount -= 1;
+                    }
                 }
             }).catch(err => {
                 console.error(`点赞状态设置异常 -> `, err);
