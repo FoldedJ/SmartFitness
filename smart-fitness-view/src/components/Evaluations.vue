@@ -177,7 +177,7 @@ export default {
     props: {
         contentId: {
             type: Number,
-            default: ''
+            default: 0  // 修改默认值为数字类型
         },
         contentType: {
             type: String,
@@ -204,6 +204,7 @@ export default {
             evaluationsCount: 0,
             comment: {},
             replyChildContent: '',
+            currentReplierId: null, // 当前被回复者ID
         };
     },
     watch: {
@@ -364,6 +365,21 @@ export default {
                 });
                 return;
             }
+            
+            // 验证contentId和contentType是否有效
+            // 修改判断条件，使用===来检查contentId是否为undefined或null
+            // 0是有效的contentId值
+            if ((this.contentId === undefined || this.contentId === null) || !this.contentType) {
+                this.$swal.fire({
+                    title: '回复失败',
+                    text: '内容ID或类型无效',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 1100
+                });
+                return;
+            }
+            
             const evaluations = {
                 contentType: this.contentType,
                 content: this.content,
@@ -409,6 +425,16 @@ export default {
                 comment.replyInputStatus = false;
             }
             comment.replyInputStatus = !comment.replyInputStatus;
+            // 设置回复文本提示
+            this.replyText = `回复${comment.userName}...`;
+            // 清空回复内容
+            this.replyChildContent = '';
+            
+            // 详细记录评论对象信息
+            console.log('评论对象详情:', JSON.stringify(comment));
+            
+            // 不再需要保存被回复者ID，后端会根据parentId自动获取
+            // 移除设置currentReplierId的逻辑
         },
         // 父级评论回复提交
         submitReply(comment) {
@@ -416,13 +442,28 @@ export default {
                 this.$message(`评论内容不能为空`);
                 return;
             }
-            const evaluationsDTO = {
+            
+            // 验证contentId和contentType是否有效
+            // 修改判断条件，使用===来检查contentId是否为undefined或null
+            // 0是有效的contentId值
+            if ((this.contentId === undefined || this.contentId === null) || !this.contentType) {
+                this.$swal.fire({
+                    title: '回复失败',
+                    text: '内容ID或类型无效',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 1100
+                });
+                return;
+            }
+            
+            const evaluations = {
                 contentType: this.contentType,
                 content: this.replyContent,
                 contentId: this.contentId,
                 parentId: comment.id
             }
-            this.$axios.post(`evaluations/insert`, evaluationsDTO).then(res => {
+            this.$axios.post(`evaluations/insert`, evaluations).then(res => {
                 if (res.data.code == 200) {
                     this.replyContent = '';
                     comment.showReplyInput = false;
@@ -456,16 +497,58 @@ export default {
                 this.$message(`评论内容不能为空`);
                 return;
             }
+            
+            // 验证contentId和contentType是否有效
+            // 修改判断条件，使用===来检查contentId是否为undefined或null
+            // 0是有效的contentId值
+            if ((this.contentId === undefined || this.contentId === null) || !this.contentType) {
+                this.$swal.fire({
+                    title: '回复失败',
+                    text: '内容ID或类型无效',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 1100
+                });
+                return;
+            }
+            
+            // 添加调试信息，确认被回复者ID是否正确
+            console.log('评论对象:', comment);
+            console.log('当前保存的被回复者ID:', this.currentReplierId);
+            
+            // 确保属性名与后端实体类完全一致，并使用显式类型转换
+            let replierId = null;
+            if (this.currentReplierId) {
+                // 使用保存的被回复者ID
+                replierId = parseInt(this.currentReplierId);
+                console.log('转换后的被回复者ID:', replierId, '类型:', typeof replierId);
+            } else {
+                // 如果currentReplierId为空，尝试从comment对象获取userId作为被回复者ID
+                if (comment && comment.userId) {
+                    replierId = parseInt(comment.userId);
+                    console.log('从评论对象获取的被回复者ID:', replierId, '类型:', typeof replierId);
+                }
+            }
+            
+            // 关键修改：确保parentId始终是顶级父评论的ID
+            // 如果是回复子评论，需要使用子评论的parentId或其自身的id作为新评论的parentId
             const evaluationsDTO = {
-                replierId: comment.userId,
+                // 移除replierId字段，让后端根据parentId自动获取被回复评论的commenterId
                 contentType: this.contentType,
                 content: this.replyChildContent,
                 contentId: this.contentId,
-                parentId: comment.parentId
+                parentId: comment.parentId || comment.id // 如果parentId不存在，则使用当前评论的id
             }
+            
+            // 打印完整的请求数据
+            console.log('评论提交数据:', evaluationsDTO);
+            console.log('JSON字符串:', JSON.stringify(evaluationsDTO));
+            
+            // 不再需要检查replierId是否为null
+            
             this.$axios.post(`evaluations/insert`, evaluationsDTO).then(res => {
                 if (res.data.code == 200) {
-                    this.content = '';
+                    this.replyChildContent = '';
                     comment.replyInputStatus = false;
                     this.$swal.fire({
                         title: '回复操作',
@@ -497,6 +580,14 @@ export default {
         },
         // 加载评论列表
         loadCommentList() {
+            // 验证contentId和contentType是否有效
+            // 修改判断条件，使用typeof和===来检查contentId是否为undefined或null
+            // 0是有效的contentId值
+            if ((this.contentId === undefined || this.contentId === null) || !this.contentType) {
+                console.warn('评论加载失败：contentId或contentType无效', { contentId: this.contentId, contentType: this.contentType });
+                return;
+            }
+            
             this.$axios.get(`evaluations/list/${this.contentId}/${this.contentType}`).then(res => {
                 if (res.data.code == 200) {
                     this.commentList = res.data.data.data;
@@ -510,7 +601,7 @@ export default {
                     });
                 }
             }).catch(err => {
-                console.error(`评论查询异常异常 -> `, err);
+                console.error(`评论查询异常 -> `, err);
             })
         },
     }

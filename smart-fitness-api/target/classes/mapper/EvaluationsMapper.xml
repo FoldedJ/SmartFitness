@@ -51,17 +51,17 @@
     <select id="getChildCommentsByParentId"
             resultType="cn.foldedj.pojo.vo.CommentChildVO"
             parameterType="Integer">
-        SELECT e.ID AS ID,
-               e.CONTENT AS CONTENT,
-               e.CREATE_TIME AS CREATE_TIME,
-               e.PARENT_ID AS PARENT_ID,
-               e.UPVOTE_LIST AS UPVOTE_LIST,
-               u.ID AS USER_ID,
-               u.USER_NAME AS USER_NAME,
-               u.USER_AVATAR AS USER_AVATAR,
-               u1.ID AS REPLIER_ID,
-               u1.USER_NAME AS REPLIER_NAME,
-               u1.USER_AVATAR AS REPLIER_AVATAR
+        SELECT e.ID AS id,
+               e.CONTENT AS content,
+               e.CREATE_TIME AS createTime,
+               e.PARENT_ID AS parentId,
+               e.UPVOTE_LIST AS upvoteList,
+               u.ID AS userId,
+               u.USER_NAME AS userName,
+               u.USER_AVATAR AS userAvatar,
+               u1.ID AS replierId,
+               u1.USER_NAME AS replierName,
+               u1.USER_AVATAR AS replierAvatar
         FROM SYSDBA.EVALUATIONS e
                  LEFT JOIN SYSDBA."USER" u ON u.ID = e.COMMENTER_ID
                  LEFT JOIN SYSDBA."USER" u1 ON u1.ID = e.REPLIER_ID
@@ -71,18 +71,18 @@
     </select>
 
     <select id="query" resultType="cn.foldedj.pojo.vo.CommentChildVO">
-        SELECT e.ID AS ID,
-               e.CONTENT AS CONTENT,
-               e.CREATE_TIME AS CREATE_TIME,
-               e.PARENT_ID AS PARENT_ID,
-               e.UPVOTE_LIST AS UPVOTE_LIST,
-               e.CONTENT_TYPE AS CONTENT_TYPE,
-               u.ID AS USER_ID,
-               u.USER_NAME AS USER_NAME,
-               u.USER_AVATAR AS USER_AVATAR,
-               u1.ID AS REPLIER_ID,
-               u1.USER_NAME AS REPLIER_NAME,
-               u1.USER_AVATAR AS REPLIER_AVATAR
+        SELECT e.ID AS id,
+               e.CONTENT AS content,
+               e.CREATE_TIME AS createTime,
+               e.PARENT_ID AS parentId,
+               e.UPVOTE_LIST AS upvoteList,
+               e.CONTENT_TYPE AS contentType,
+               u.ID AS userId,
+               u.USER_NAME AS userName,
+               u.USER_AVATAR AS userAvatar,
+               u1.ID AS replierId,
+               u1.USER_NAME AS replierName,
+               u1.USER_AVATAR AS replierAvatar
         FROM SYSDBA.EVALUATIONS e
         LEFT JOIN SYSDBA."USER" u ON u.ID = e.COMMENTER_ID
         LEFT JOIN SYSDBA."USER" u1 ON u1.ID = e.REPLIER_ID
@@ -149,6 +149,21 @@
         FROM SYSDBA.EVALUATIONS e
         WHERE e.CONTENT_ID = #{contentId}
           AND e.CONTENT_TYPE = #{contentType}
+    </select>
+    
+    <!--根据ID查询评论-->
+    <select id="getById" resultType="cn.foldedj.pojo.entity.Evaluations">
+        SELECT e.ID,
+               e.PARENT_ID,
+               e.COMMENTER_ID,
+               e.REPLIER_ID,
+               e.CONTENT_TYPE,
+               e.CONTENT_ID,
+               e.CONTENT,
+               e.UPVOTE_LIST,
+               e.CREATE_TIME
+        FROM SYSDBA.EVALUATIONS e
+        WHERE e.ID = #{id}
     </select>
 
 </mapper>

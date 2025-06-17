@@ -38,6 +38,14 @@ public interface EvaluationsMapper {
      * @return List<CommentParentVO>
      */
     Integer queryCount(EvaluationsQueryDto evaluationsQueryDto);
+    
+    /**
+     * 根据ID查询评论
+     *
+     * @param id 评论ID
+     * @return Evaluations
+     */
+    Evaluations getById(@Param(value = "id") Integer id);
 
     /**
      * 查询全部二级评论

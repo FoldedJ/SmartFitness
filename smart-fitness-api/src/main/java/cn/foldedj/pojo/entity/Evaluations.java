@@ -25,12 +25,12 @@ public class Evaluations {
     /**
      * 评论者ID
      */
-    private Integer commenterId;
+    private Long commenterId;
 
     /**
      * 回复者ID
      */
-    private Integer replierId;
+    private Long replierId;
 
     /**
      * 内容类型

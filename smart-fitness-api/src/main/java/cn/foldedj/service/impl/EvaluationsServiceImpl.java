@@ -37,14 +37,30 @@ public class EvaluationsServiceImpl implements EvaluationsService {
      */
     @Override
     public Result<Object> insert(Evaluations evaluations) {
-        evaluations.setCommenterId(LocalThreadHolder.getUserId());
+        // 将当前用户ID转换为Long类型
+        evaluations.setCommenterId(Long.valueOf(LocalThreadHolder.getUserId()));
         User queryConditionEntity = User.builder().id(LocalThreadHolder.getUserId()).build();
         User user = userMapper.getByActive(queryConditionEntity);
         if (user.getIsWord()) {
             return ApiResult.error("账户已被禁言");
         }
+        
+        // 如果是回复评论且parentId不为空，自动设置replierId为被回复评论的commenterId
+        if (evaluations.getParentId() != null) {
+            // 查询被回复的评论
+            Evaluations parentComment = evaluationsMapper.getById(evaluations.getParentId());
+            if (parentComment != null) {
+                // 检查父评论的commenterId是否为null
+                if (parentComment.getCommenterId() != null) {
+                    // 设置replierId为被回复评论的commenterId
+                    evaluations.setReplierId(parentComment.getCommenterId());
+                }
+            }
+        }
+        
         // TODO 需要发通知！
         evaluations.setCreateTime(LocalDateTime.now());
+        // 确保replierId字段被保留，不做任何修改
         evaluationsMapper.save(evaluations);
         return ApiResult.success("评论成功");
     }
