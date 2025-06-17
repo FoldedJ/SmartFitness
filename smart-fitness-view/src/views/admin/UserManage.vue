@@ -13,11 +13,15 @@
                     <el-button size="small"
                         style="background-color: rgb(96, 98, 102);color: rgb(247,248,249);border: none;"
                         class="customer" type="info" @click="add()"><i class="el-icon-plus"></i>新增用户</el-button>
+                    <el-button size="small"
+                        style="background-color: rgb(230, 62, 49);color: rgb(247,248,249);border: none;margin-left: 5px;"
+                        class="customer" type="danger" @click="batchDelete()"><i class="el-icon-delete"></i>批量删除</el-button>
                 </span>
             </el-row>
         </el-row>
         <el-row style="margin: 0 20px;border-top: 1px solid rgb(245,245,245);">
             <el-table @selection-change="handleSelectionChange" :data="tableData" style="width: 100%">
+                <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="userAvatar" width="68" label="头像">
                     <template slot-scope="scope">
                         <el-avatar :size="25" :src="scope.row.userAvatar" style="margin-top: 10px;"></el-avatar>
@@ -60,7 +64,6 @@
                     <template slot-scope="scope">
                         <span class="text-button" @click="handleStatus(scope.row)">账号状态</span>
                         <span class="text-button" @click="handleEdit(scope.row)">编辑</span>
-                        <span class="text-button" @click="handleDelete(scope.row)">删除</span>
                     </template>
                 </el-table-column>
             </el-table>
@@ -141,7 +144,10 @@
                     </el-switch>
                 </el-row>
                 <span class="dialog-hover">设为管理员</span>
-                <el-switch v-model="roleStatus" active-color="rgb(230, 62, 49)" inactive-color="rgb(246,246,246)">
+                <el-switch v-model="roleStatus" 
+                    active-color="rgb(230, 62, 49)" 
+                    inactive-color="rgb(246,246,246)"
+                    @change="(val) => { console.log('角色开关状态改变:', val) }">
                 </el-switch>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -182,7 +188,9 @@ export default {
             statusData: {
                 isLogin: false,
                 isWord: false
-            }
+            },
+            roleStatus: false, // 明确初始化roleStatus
+            selectedRows: [] // 添加selectedRows数组
         };
     },
     created() {
@@ -196,6 +204,7 @@ export default {
                 isWord: this.data.isWord,
                 userRole: this.roleStatus ? 1 : 2
             }
+            console.log('提交的用户数据:', userUpdateDto); // 添加日志便于调试
             this.$axios.put(`/user/backUpdate`, userUpdateDto).then(res => {
                 if (res.data.code === 200) {
                     this.$notify({
@@ -205,6 +214,7 @@ export default {
                         type: 'success'
                     });
                     this.dialogStatusOperation = false;
+                    this.roleStatus = false; // 重置roleStatus
                     this.fetchFreshData();
                 }
             }).catch(error => {
@@ -213,8 +223,10 @@ export default {
         },
         handleStatus(data) {
             this.dialogStatusOperation = true;
-            this.roleStatus = data.userRole === 1
-            this.data = data;
+            // 确保先设置data，再设置roleStatus
+            this.data = JSON.parse(JSON.stringify(data)); // 使用深拷贝避免引用问题
+            this.roleStatus = this.data.userRole === 1;
+            console.log('用户角色状态:', this.data.userRole, this.roleStatus); // 添加日志便于调试
         },
         handleAvatarSuccess(res, file) {
             if (res.code !== 200) {
@@ -364,6 +376,7 @@ export default {
             this.isOperation = false;
             this.dialogStatusOperation = false;
             this.dialogUserOperaion = false;
+            this.roleStatus = false; // 重置roleStatus
         },
         async fetchFreshData() {
             try {
@@ -418,10 +431,6 @@ export default {
             this.data = { ...row };
             this.userAvatar = row.userAvatar;
             this.originalGender = row.gender; // 保存原始性别值
-        },
-        handleDelete(row) {
-            this.selectedRows.push(row);
-            this.batchDelete();
         }
     },
 };
