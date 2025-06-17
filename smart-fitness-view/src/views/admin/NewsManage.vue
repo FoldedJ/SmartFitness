@@ -169,6 +169,16 @@ export default {
                 }
             })
         },
+        // 加载不包含"全部"选项的标签列表，用于新增和编辑帖子
+        loadTagsForEdit() {
+            this.$axios.post(`/tags/query`, {}).then(response => {
+                const { data } = response;
+                if (data.code === 200) {
+                    return data.data;
+                }
+                return [];
+            })
+        },
         handleAvatarSuccess(res, file) {
             if (res.code !== 200) {
                 this.$message.error(`帖子封面上传异常`);
@@ -294,6 +304,14 @@ export default {
         },
         add() {
             this.dialogUserOperaion = true;
+            // 获取不包含"全部"选项的标签列表
+            this.$axios.post(`/tags/query`, {}).then(response => {
+                const { data } = response;
+                if (data.code === 200) {
+                    // 在新增帖子对话框中使用不包含"全部"选项的标签列表
+                    this.tagsList = data.data;
+                }
+            });
         },
         handleFilter() {
             this.currentPage = 1;
@@ -316,7 +334,15 @@ export default {
             this.dialogUserOperaion = true;
             this.isOperation = true;
             row.userPwd = null;
-            this.data = { ...row }
+            this.data = { ...row };
+            // 获取不包含"全部"选项的标签列表
+            this.$axios.post(`/tags/query`, {}).then(response => {
+                const { data } = response;
+                if (data.code === 200) {
+                    // 在编辑帖子对话框中使用不包含"全部"选项的标签列表
+                    this.tagsList = data.data;
+                }
+            });
         },
         handleDelete(row) {
             this.selectedRows.push(row);
