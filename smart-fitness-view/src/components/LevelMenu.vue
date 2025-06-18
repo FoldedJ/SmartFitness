@@ -39,8 +39,6 @@
                                 @click.native="userCenterPanel">个人中心</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-warning-outline"
                                 @click.native="resetPwd">修改密码</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-upload"
-                                @click.native="healthDataRecord">指标记录</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-edit-outline"
                                 @click.native="publishNews">发布</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-food"
@@ -117,10 +115,7 @@ export default {
         loginOut() {
             this.$emit('eventListener', 'loginOut');
         },
-        // 记录个人健康指标，传回父组件处理
-        healthDataRecord() {
-            this.$emit('eventListener', 'healthDataRecord');
-        },
+
         // 发布资讯，传回父组件处理
         publishNews() {
             this.$router.push('/publish-news');

@@ -29,9 +29,8 @@ public class ProtectorAspect {
      * 环绕：两端拦截
      *
      * @param proceedingJoinPoint 连接点
-     * @return Object
-     * @author 【B站：程序员晨星】
-     */
+ * @return Object
+ */
     @Around("@annotation(cn.foldedj.aop.Protector)")
     public Object auth(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

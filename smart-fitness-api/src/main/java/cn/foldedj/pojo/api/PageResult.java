@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
  * 通用响应 - 分页
  *
  * @param <T> 泛型
- * @author 【B站：程序员晨星】
  */
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
@@ -30,8 +29,7 @@ public class PageResult<T> extends Result<T> {
      * 参数构造
      *
      * @param code 响应码
-     * @author 【B站：程序员晨星】
-     */
+ */
     public PageResult(Integer code) {
         super(code, "查询成功");
     }
@@ -40,11 +38,10 @@ public class PageResult<T> extends Result<T> {
      * 分页查血结果反馈
      *
      * @param data  数据源
-     * @param total 总记录数
-     * @param <T>   泛型
-     * @return <T>
-     * @author 【B站：程序员晨星】
-     */
+ * @param total 总记录数
+ * @param <T>   泛型
+ * @return <T>
+ */
     public static <T> Result<T> success(T data, Integer total) {
         PageResult<T> result = new PageResult<>(ResultCode.SUCCESS.getCode());
         result.setData(data);
