@@ -187,7 +187,6 @@ public class TencentHunyuanServiceImpl implements TencentHunyuanService {
      * @return 包含身高和体重的数组，[0]为身高，[1]为体重
      */
     private Double[] getUserLatestHeightAndWeight(Integer userId) {
-        // TODO: 实现从其他数据源获取身高体重的逻辑
         Map<String, Object> heightAndWeight = null;
         log.info("TencentHunyuanServiceImpl - 用户ID: {} 的身高体重数据: {}", userId, heightAndWeight);
         
