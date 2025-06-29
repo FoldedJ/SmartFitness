@@ -15,8 +15,8 @@ spring:
   datasource:
     driver-class-name: dm.jdbc.driver.DmDriver
     url: jdbc:dm://localhost:5236
-    username: SYSDBA
-    password: Jiangshanlin323
+    username:
+    password: 
 # 让 Mybatis 在 Mapper目录下找到 XML 映射文件
 mybatis:
   mapper-locations: classpath:mapper/*.xml
