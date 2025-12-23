@@ -96,12 +96,25 @@ export default {
     },
 
     methods: {
+        isValidEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        },
         async updateUserInfo() {
             try {
+                const email = (this.userInfo.email || '').trim();
+                if (!email) {
+                    this.$message.error('è¯·è¾“å…¥é‚®ç®±');
+                    return;
+                }
+                if (!this.isValidEmail(email)) {
+                    this.$message.error('è¯·è¾“å…¥æ­£ç¡®çš„é‚®ç®±æ ¼å¼');
+                    return;
+                }
                 const userUpdateDTO = {
                     userAvatar: this.userInfo.url,
                     userName: this.userInfo.name,
-                    userEmail: this.userInfo.email
+                    userEmail: email
                 }
                 const resposne = await this.$axios.put(`/user/update`, userUpdateDTO);
                 const { data } = resposne;

@@ -9,7 +9,7 @@
         </div>
 
         <!-- 个人中心 -->
-        <el-dialog :show-close="false" :visible.sync="dialogOperaion" width="26%">
+        <el-dialog append-to-body :show-close="false" :visible.sync="dialogOperaion" width="26%">
             <div slot="title" style="padding: 25px 0 0 20px;">
                 <span style="font-size: 18px;font-weight: 800;">个人中心</span>
             </div>
@@ -75,7 +75,7 @@
             </span>
         </el-dialog>
         <!-- 重置密码 -->
-        <el-dialog :show-close="false" :visible.sync="dialogRetPwdOperaion" width="26%">
+        <el-dialog append-to-body :show-close="false" :visible.sync="dialogRetPwdOperaion" width="26%">
             <div slot="title" style="padding: 25px 0 0 20px;">
                 <span style="font-size: 18px;font-weight: 800;">重置密码</span>
             </div>
@@ -107,7 +107,7 @@
             </span>
         </el-dialog>
         <!-- 记录健康指标 -->
-        <el-dialog :visible.sync="healthModelConfigDialog" width="28%" :show-close="false">
+        <el-dialog append-to-body :visible.sync="healthModelConfigDialog" width="28%" :show-close="false">
             <div slot="title">
                 <p style="color: rgba(0, 1, 4, 0.8);margin: 0;padding: 20px;font-size: 18px;font-weight: 600;">
                     记录健康指标</p>
@@ -207,8 +207,40 @@ export default {
         updateUserPwd() {
             this.resetPwd();
         },
+        isValidEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        },
         async updateUserInfo() {
             try {
+                if (!this.data.email) {
+                    this.$swal.fire({
+                        title: '修改个人信息',
+                        text: '请输入邮箱',
+                        icon: 'warning',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    return;
+                }
+                if (!this.isValidEmail(this.data.email)) {
+                    this.$swal.fire({
+                        title: '修改个人信息',
+                        text: '请输入正确的邮箱格式',
+                        icon: 'warning',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    return;
+                }
+                const confirmed = await this.$swalConfirm({
+                    title: '确认修改',
+                    text: '确认要修改个人信息吗？',
+                    icon: 'warning',
+                });
+                if (!confirmed) {
+                    return;
+                }
                 const userUpdateDTO = {
                     userAvatar: this.data.url,
                     userName: this.data.name,
