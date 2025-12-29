@@ -23,7 +23,13 @@ spring:
 # 让 Mybatis 在 Mapper目录下找到 XML 映射文件
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-
+# 腾讯混元API配置
+tencent:
+  hunyuan:
+    secretId: 
+    secretKey: 
+    endpoint: hunyuan.tencentcloudapi.com
+    region: ap-beijing
 
 
 
