@@ -43,10 +43,11 @@
                                 @click.native="publishNews">发布</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-food"
                                 @click.native="nutritionRecommendation">营养推荐</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-bell"
-                                @click.native="messageCenter">
-                                消息通知
-                                <el-badge v-if="noReadMsg !== 0" :value="noReadMsg" style="margin-left: 5px;"></el-badge>
+                            <el-dropdown-item icon="el-icon-bell" @click.native="messageCenter">
+                                <div style="display: inline-flex; align-items: center; justify-content: space-between; width: 100px;">
+                                    <span>消息通知</span>
+                                    <el-badge v-if="noReadMsg > 0" :value="noReadMsg" class="item" type="danger" style="margin-top: 5px;" />
+                                </div>
                             </el-dropdown-item>
                             <el-dropdown-item icon="el-icon-back" @click.native="loginOut">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
@@ -88,7 +89,9 @@ export default {
         }
     },
     mounted() {
-        this.pathToDo(this.defaultPath);
+        if (this.$route.path === '/user') {
+            this.pathToDo(this.defaultPath);
+        }
         this.loadMsgCount();
     },
     methods: {
@@ -126,6 +129,9 @@ export default {
         },
         async loadMsgCount() {
             const userInfo = sessionStorage.getItem('userInfo');
+            if (!userInfo) {
+                return;
+            }
             const userInfoEntity = JSON.parse(userInfo);
             const messageQueryDto = { userId: userInfoEntity.id, isRead: false }
             const response = await this.$axios.post(`/message/query`, messageQueryDto);

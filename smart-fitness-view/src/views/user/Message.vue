@@ -1,19 +1,5 @@
 <template>
     <div>
-        <div style="line-height: 70px;padding: 0 50px;">
-            <el-row>
-                <el-col :span="6">
-                    <Logo sysName="小绿书"/>
-                </el-col>
-                <el-col :span="18">
-                    <span style="float: right;display: flex; align-items: center; flex-wrap: wrap;">
-                        <img style="width: 30px;height: 30px;border-radius: 15px;" :src="userInfo.userAvatar" />
-                        <span style="margin-left: 8px;">{{ userInfo.userName }}</span>
-                    </span>
-                </el-col>
-            </el-row>
-        </div>
-        <div style="height: 20px;background-color: rgb(248, 248, 248);"></div>
         <div style="padding: 10px 50px;">
             <div>
                 <p style="font-size: 16px;padding: 10px 0;">
@@ -40,6 +26,7 @@
                                 <i v-else-if="message.messageType === 2" class="el-icon-s-promotion"></i>
                                 <i v-else-if="message.messageType === 3" class="el-icon-data-analysis"></i>
                                 <i v-else class="el-icon-message-solid"></i>
+                                <div v-if="!message.isRead" class="red-dot"></div>
                             </span>
                         </el-col>
                         <el-col :span="23">
@@ -59,9 +46,7 @@
     </div>
 </template>
 <script>
-import Logo from '@/components/Logo';
 export default {
-    components: { Logo },
     data() {
         return {
             userInfo: {},
@@ -153,6 +138,7 @@ export default {
     border-radius: 20px;
     background-color: rgb(82, 152, 237);
     border: 3px solid rgb(212, 227, 230);
+    position: relative;
 
     i {
         line-height: 30px;
@@ -161,6 +147,17 @@ export default {
         font-size: 25px;
         color: #f1f1f1;
     }
+}
+
+.red-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    background-color: #f56c6c;
+    border-radius: 50%;
+    border: 2px solid #fff;
 }
 
 .message-time {

@@ -9,107 +9,105 @@
         </div>
 
         <!-- 个人中心 -->
-        <el-dialog :show-close="false" :visible.sync="dialogOperaion" width="26%">
-            <div slot="title" style="padding: 25px 0 0 20px;">
-                <span style="font-size: 18px;font-weight: 800;">个人中心</span>
+        <el-dialog :show-close="false" :visible.sync="dialogOperaion" width="30%" custom-class="personal-center-dialog">
+            <div slot="title" class="dialog-header" style="text-align: center; padding-top: 10px;">
+                <span style="font-size: 24px;font-weight: 800; color: #333;">个人中心</span>
             </div>
-            <el-row style="padding: 10px 20px 20px 20px;">
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;margin-bottom: 10px;">
-                        <span class="modelName">*头像</span>
-                    </p>
+            <el-row style="padding: 20px 30px;">
+                <el-row style="margin-bottom: 20px; text-align: center;">
                     <el-upload class="avatar-uploader" action="http://localhost:21090/api/smart-fitness/v1.0/file/upload"
                         :show-file-list="false" :on-success="handleAvatarSuccess">
-                        <img v-if="data.url" :src="data.url" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        <img v-if="data.url" :src="data.url" class="avatar" style="border: 2px solid #e4e7ed; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);">
+                        <i v-else class="el-icon-plus avatar-uploader-icon" style="border: 1px dashed #d9d9d9;"></i>
                     </el-upload>
+                    <p style="font-size: 12px; color: #909399; margin-top: 8px;">点击头像进行修改</p>
                 </el-row>
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;">
-                        <span class="modelName">*用户名</span>
+                <el-row style="margin-bottom: 15px;">
+                    <p style="font-size: 14px; padding: 5px 0; color: #606266;">
+                        <span class="modelName"><i class="el-icon-user"></i> 用户名</span>
                     </p>
-                    <input class="modelInput" type="text" v-model="data.name" placeholder="用户名">
+                    <el-input v-model="data.name" placeholder="请输入用户名" size="medium"></el-input>
                 </el-row>
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;">
-                        <span class="modelName">*个人邮箱</span>
+                <el-row style="margin-bottom: 15px;">
+                    <p style="font-size: 14px; padding: 5px 0; color: #606266;">
+                        <span class="modelName"><i class="el-icon-message"></i> 个人邮箱</span>
                     </p>
-                    <input class="modelInput" type="text" v-model="data.email" placeholder="个人邮箱">
+                    <el-input v-model="data.email" placeholder="请输入个人邮箱" size="medium"></el-input>
                 </el-row>
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;">
-                        <span class="modelName">出生日期</span>
+                <el-row style="margin-bottom: 15px;">
+                    <p style="font-size: 14px; padding: 5px 0; color: #606266;">
+                        <span class="modelName"><i class="el-icon-date"></i> 出生日期</span>
                     </p>
                     <el-date-picker
-                        class="modelInput"
+                        style="width: 100%;"
                         v-model="data.birthDate"
                         type="date"
+                        size="medium"
                         placeholder="选择出生日期"
                         format="yyyy-MM-dd"
                         value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-row>
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;">
-                        <span class="modelName">性别</span>
+                <el-row style="margin-bottom: 5px;">
+                    <p style="font-size: 14px; padding: 5px 0; color: #606266;">
+                        <span class="modelName"><i class="el-icon-male"></i> 性别</span>
                     </p>
                     <el-select
-                        class="modelInput"
+                        style="width: 100%;"
                         v-model="data.gender"
                         placeholder="选择性别"
+                        size="medium"
                         :disabled="userInfo.gender !== null && userInfo.gender !== undefined && userInfo.gender !== ''">
                         <el-option label="男" value="男"></el-option>
                         <el-option label="女" value="女"></el-option>
                         <el-option label="其他" value="其他"></el-option>
                     </el-select>
-                    <p v-if="userInfo.gender !== null && userInfo.gender !== undefined && userInfo.gender !== ''" style="font-size: 12px;color: #909399;margin-top: 5px;">
-                        性别一旦设置后不可修改
+                    <p v-if="userInfo.gender !== null && userInfo.gender !== undefined && userInfo.gender !== ''" style="font-size: 12px;color: #E6A23C;margin-top: 8px; display: flex; align-items: center;">
+                        <i class="el-icon-warning-outline" style="margin-right: 4px;"></i> 性别一旦设置后不可修改
                     </p>
                 </el-row>
             </el-row>
-            <span slot="footer" class="dialog-footer">
-                <el-button class="customer" size="small" style="background-color: rgb(241, 241, 241);border: none;"
-                    @click="dialogOperaion = false">取 消</el-button>
+            <span slot="footer" class="dialog-footer" style="padding-bottom: 20px; padding-right: 30px;">
+                <el-button size="medium" style="margin-right: 10px;" @click="dialogOperaion = false">取 消</el-button>
                 <el-popconfirm
                     title="是否确认要修改？"
                     icon="el-icon-warning-outline"
                     confirm-button-text="确认"
                     cancel-button-text="取消"
                     @confirm="updateUserInfo">
-                    <el-button slot="reference" size="small" style="background-color: #15559a;border: none;" class="customer" type="info">修改</el-button>
+                    <el-button slot="reference" size="medium" type="primary" style="background-color: #15559a; border-color: #15559a;">保存修改</el-button>
                 </el-popconfirm>
             </span>
         </el-dialog>
         <!-- 重置密码 -->
-        <el-dialog :show-close="false" :visible.sync="dialogRetPwdOperaion" width="26%">
-            <div slot="title" style="padding: 25px 0 0 20px;">
-                <span style="font-size: 18px;font-weight: 800;">重置密码</span>
+        <el-dialog :show-close="false" :visible.sync="dialogRetPwdOperaion" width="30%" custom-class="reset-pwd-dialog">
+            <div slot="title" class="dialog-header" style="text-align: center; padding-top: 10px;">
+                <span style="font-size: 24px;font-weight: 800; color: #333;">重置密码</span>
             </div>
-            <el-row style="padding: 10px 20px 20px 20px;">
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;margin-bottom: 10px;">
-                        <span class="modelName">*原始密码</span>
+            <el-row style="padding: 20px 30px;">
+                <el-row style="margin-bottom: 20px;">
+                    <p style="font-size: 14px; padding: 5px 0; color: #606266;">
+                        <span class="modelName"><i class="el-icon-key"></i> 原始密码</span>
                     </p>
-                    <input class="modelInput" type="password" v-model="pwdEntity.oldPwd" placeholder="原始密码">
+                    <el-input type="password" v-model="pwdEntity.oldPwd" placeholder="请输入原始密码" size="medium" show-password></el-input>
                 </el-row>
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;margin-bottom: 10px;">
-                        <span class="modelName">*新密码</span>
+                <el-row style="margin-bottom: 20px;">
+                    <p style="font-size: 14px; padding: 5px 0; color: #606266;">
+                        <span class="modelName"><i class="el-icon-lock"></i> 新密码</span>
                     </p>
-                    <input class="modelInput" type="password" v-model="pwdEntity.newPwd" placeholder="新密码">
+                    <el-input type="password" v-model="pwdEntity.newPwd" placeholder="请输入新密码" size="medium" show-password></el-input>
                 </el-row>
-                <el-row>
-                    <p style="font-size: 12px;padding: 3px 0;margin-bottom: 10px;">
-                        <span class="modelName">*确认密码</span>
+                <el-row style="margin-bottom: 5px;">
+                    <p style="font-size: 14px; padding: 5px 0; color: #606266;">
+                        <span class="modelName"><i class="el-icon-circle-check"></i> 确认密码</span>
                     </p>
-                    <input class="modelInput" type="password" v-model="pwdEntity.againPwd" placeholder="确认密码">
+                    <el-input type="password" v-model="pwdEntity.againPwd" placeholder="请再次输入新密码" size="medium" show-password></el-input>
                 </el-row>
             </el-row>
-            <span slot="footer" class="dialog-footer">
-                <el-button class="customer" size="small" style="background-color: rgb(241, 241, 241);border: none;"
-                    @click="dialogRetPwdOperaion = false">取 消</el-button>
-                <el-button size="small" style="background-color: #15559a;border: none;" class="customer" type="info"
-                    @click="updateUserPwd">修改</el-button>
+            <span slot="footer" class="dialog-footer" style="padding-bottom: 20px; padding-right: 30px;">
+                <el-button size="medium" style="margin-right: 10px;" @click="dialogRetPwdOperaion = false">取 消</el-button>
+                <el-button size="medium" type="primary" style="background-color: #15559a; border-color: #15559a;"
+                    @click="updateUserPwd">确认修改</el-button>
             </span>
         </el-dialog>
         <!-- 记录健康指标 -->

@@ -183,7 +183,7 @@ export default {
           type: 'warning'
         });
         
-        const response = await deleteNutritionRecommendations([id]);
+        const response = await deleteNutritionRecommendation(id);
         if (response.data.code === 200) {
           this.$message.success('删除成功');
         } else {

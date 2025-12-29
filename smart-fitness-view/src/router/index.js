@@ -22,10 +22,6 @@ const routes = [
     component: () => import(`@/views/register/Register.vue`)
   },
   {
-    path: "/message",
-    component: () => import(`@/views/user/Message.vue`)
-  },
-  {
     path: "/record",
     component: () => import(`@/views/user/Record.vue`)
   },
@@ -189,6 +185,13 @@ const routes = [
           requireAuth: true,
           title: '营养推荐' 
         },
+        isHidden: true
+      },
+      {
+        path: "/message",
+        name: '消息中心',
+        component: () => import(`@/views/user/Message.vue`),
+        meta: { requireAuth: true },
         isHidden: true
       },
       
