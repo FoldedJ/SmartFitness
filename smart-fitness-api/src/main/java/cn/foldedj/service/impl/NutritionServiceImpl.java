@@ -264,19 +264,23 @@ public class NutritionServiceImpl implements NutritionService {
             
             String notesStr = "饮食建议: " + String.join("; ", suggestions) + "；注意事项: " + String.join("; ", notes);
             byte[] notesBytes = notesStr.getBytes(StandardCharsets.UTF_8);
-            if (notesBytes.length > 500) {
+            log.info("生成建议与注意事项总长度(bytes): {}", notesBytes.length);
+            
+            // 增加长度限制到4000字节，防止截断
+            if (notesBytes.length > 4000) {
                 StringBuilder sb = new StringBuilder();
                 int count = 0;
                 for (int i = 0; i < notesStr.length(); i++) {
                     String ch = notesStr.substring(i, i + 1);
                     int len = ch.getBytes(StandardCharsets.UTF_8).length;
-                    if (count + len > 500) {
+                    if (count + len > 4000) {
                         break;
                     }
                     sb.append(ch);
                     count += len;
                 }
                 notesStr = sb.toString();
+                log.warn("建议与注意事项过长，已截断");
             }
             // 创建营养推荐
             NutritionRecommendation recommendation = NutritionRecommendation.builder()

@@ -46,11 +46,11 @@
    ```bash
    npm install
    ```
-3. 启动开发服务器：
+3. 在终端进入 `smart-fitness-view/src` 源代码目录。
+4. 启动前端：
    ```bash
-   npm run serve
+   npm run dev
    ```
-4. 访问地址: `http://localhost:8080` (默认)。
 
 ## 三、功能模块
 
