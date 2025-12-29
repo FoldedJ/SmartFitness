@@ -11,15 +11,23 @@
                 后台&nbsp;&nbsp;/&nbsp;&nbsp;{{ tag == '' ? '元数据' : tag }}
             </span>
         </span>
-        <span class="user-block">
+    <span class="user-block">
             <el-dropdown class="user-dropdown">
                 <span class="el-dropdown-link" style="display: flex; align-items: center;">
-                    <el-avatar :size="35" :src="userInfo.url" style="margin-top: 0;"></el-avatar>
+                    <el-badge :is-dot="noReadMsg > 0" class="item">
+                        <el-avatar :size="35" :src="userInfo.url" style="margin-top: 0;"></el-avatar>
+                    </el-badge>
                     <span class="userName" style="margin-left: 5px;font-size: 16px;">{{ userInfo.name }}</span>
                     <i class="el-icon-arrow-down el-icon--right" style="margin-left: 5px;"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item icon="el-icon-user-solid" @click.native="userCenterPanel">个人资料</el-dropdown-item>
+                    <el-dropdown-item icon="el-icon-bell" @click.native="messageCenter">
+                        <div style="display: inline-flex; align-items: center; justify-content: space-between; width: 100px;">
+                            <span>消息通知</span>
+                            <el-badge v-if="noReadMsg > 0" :value="noReadMsg" class="item" type="danger" style="margin-top: 5px;" />
+                        </div>
+                    </el-dropdown-item>
                     <el-dropdown-item icon="el-icon-switch-button" @click.native="loginOut">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -63,6 +71,22 @@ export default {
             this.showFlag = !this.showFlag;
             sessionStorage.setItem('flag', this.showFlag);
             this.$emit('selectOperation', this.showFlag);
+        },
+        async loadMsgCount() {
+            const userInfo = sessionStorage.getItem('userInfo');
+            if (!userInfo) {
+                return;
+            }
+            const userInfoEntity = JSON.parse(userInfo);
+            const messageQueryDto = { userId: userInfoEntity.id, isRead: false }
+            const response = await this.$axios.post(`/message/query`, messageQueryDto);
+            const { data } = response;
+            if(data.code === 200){
+                this.noReadMsg = data.data.length;
+            }
+        },
+        messageCenter() {
+            this.$router.push('/messageManage');
         },
     }
 };

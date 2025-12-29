@@ -30,7 +30,9 @@
                 <span class="user-block">
                     <el-dropdown class="user-dropdown">
                         <span class="el-dropdown-link" style="display: flex; align-items: center;">
-                            <el-avatar :size="35" :src="userInfo.url" style="margin-top: 0;"></el-avatar>
+                            <el-badge :is-dot="noReadMsg > 0" class="item">
+                                <el-avatar :size="35" :src="userInfo.url" style="margin-top: 0;"></el-avatar>
+                            </el-badge>
                             <span class="userName" style="margin-left: 5px;font-size: 16px;width: 50px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{ userInfo.name }}</span>
                             <i class="el-icon-arrow-down el-icon--right" style="margin-left: 5px;"></i>
                         </span>

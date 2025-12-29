@@ -6,7 +6,7 @@
                     <PieChart fontColor="rgb(51,51,51)" bag="rgb(248,248,248)" :values="pieValues" :types="pieTypes" />
                 </div>
                 <div style="padding: 10px 5px;box-sizing: border-box;">
-                    <div v-for="(message,index) in messageList" :key="message">
+                    <div v-for="(message,index) in messageList" :key="index">
                         <div style="font-size: 16px;font-weight: 800;">{{ message.receiverName }}</div>
                         <div style="padding: 8px 0;font-size: 14px;color: #6f6d6d;">{{ message.content }}</div>
                         <div style="padding: 5px 0;font-size: 14px;color: #6f6d6d;">{{ message.createTime }}</div>
