@@ -84,7 +84,7 @@ public class TencentHunyuanServiceImpl implements TencentHunyuanService {
                 "3. 维生素和矿物质的建议\n" +
                 "4. 饮食建议\n" +
                 "5. 注意事项\n\n" +
-                "请以纯文本格式返回，使用以下格式,对于热量蛋白质等给出精确值，不要给出范围：\n" +
+                "请严格以纯文本格式返回，不要返回其他格式，使用以下格式,对于热量蛋白质等给出精确值，不要给出范围：\n" +
                 "热量：[每日所需热量]卡路里\n" +
                 "蛋白质：[蛋白质推荐量]克\n" +
                 "碳水化合物：[碳水化合物推荐量]克\n" +
@@ -187,7 +187,6 @@ public class TencentHunyuanServiceImpl implements TencentHunyuanService {
      * @return 包含身高和体重的数组，[0]为身高，[1]为体重
      */
     private Double[] getUserLatestHeightAndWeight(Integer userId) {
-        // TODO: 实现从其他数据源获取身高体重的逻辑
         Map<String, Object> heightAndWeight = null;
         log.info("TencentHunyuanServiceImpl - 用户ID: {} 的身高体重数据: {}", userId, heightAndWeight);
         

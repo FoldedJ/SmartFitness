@@ -58,8 +58,22 @@
         </el-row>
         
         <div v-if="currentRecommendation.notes" style="margin-top: 20px;">
-          <h4>推荐说明</h4>
-          <p>{{ currentRecommendation.notes }}</p>
+          <div v-if="parsedSuggestions.length">
+            <h4>饮食建议</h4>
+            <ul>
+              <li v-for="(item, idx) in parsedSuggestions" :key="'sug-'+idx">{{ item }}</li>
+            </ul>
+          </div>
+          <div v-if="parsedNotes.length" style="margin-top: 10px;">
+            <h4>注意事项</h4>
+            <ul>
+              <li v-for="(item, idx) in parsedNotes" :key="'note-'+idx">{{ item }}</li>
+            </ul>
+          </div>
+          <div v-if="!parsedSuggestions.length && !parsedNotes.length">
+            <h4>推荐说明</h4>
+            <p>{{ currentRecommendation.notes }}</p>
+          </div>
         </div>
         
 
@@ -94,6 +108,20 @@ export default {
   },
   mounted() {
     this.loadLatestRecommendation();
+  },
+  computed: {
+    parsedSuggestions() {
+      const text = (this.currentRecommendation && this.currentRecommendation.notes) || '';
+      const m = text.match(/饮食建议:\s*(.*?)(；注意事项:|注意事项:|$)/);
+      const part = m ? m[1] : '';
+      return part ? part.split(/[;；]/).map(i => i.trim()).filter(i => i) : [];
+    },
+    parsedNotes() {
+      const text = (this.currentRecommendation && this.currentRecommendation.notes) || '';
+      const m = text.match(/注意事项:\s*(.*)$/);
+      const part = m ? m[1] : '';
+      return part ? part.split(/[;；]/).map(i => i.trim()).filter(i => i) : [];
+    }
   },
   methods: {
     // 加载最新的推荐

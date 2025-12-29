@@ -19,6 +19,8 @@ public interface NewsSaveMapper {
 
     void batchDelete(@Param(value = "ids") List<Long> ids);
 
+    void deleteByNewsIds(@Param(value = "newsIds") List<Integer> newsIds);
+
     List<NewsSaveVO> query(NewsSaveQueryDto newsSaveQueryDto);
 
     Integer queryCount(NewsSaveQueryDto newsSaveQueryDto);

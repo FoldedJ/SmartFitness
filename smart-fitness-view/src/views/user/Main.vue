@@ -70,8 +70,14 @@
             <span slot="footer" class="dialog-footer">
                 <el-button class="customer" size="small" style="background-color: rgb(241, 241, 241);border: none;"
                     @click="dialogOperaion = false">取 消</el-button>
-                <el-button size="small" style="background-color: #15559a;border: none;" class="customer" type="info"
-                    @click="updateUserInfo">修改</el-button>
+                <el-popconfirm
+                    title="是否确认要修改？"
+                    icon="el-icon-warning-outline"
+                    confirm-button-text="确认"
+                    cancel-button-text="取消"
+                    @confirm="updateUserInfo">
+                    <el-button slot="reference" size="small" style="background-color: #15559a;border: none;" class="customer" type="info">修改</el-button>
+                </el-popconfirm>
             </span>
         </el-dialog>
         <!-- 重置密码 -->
@@ -209,10 +215,16 @@ export default {
         },
         async updateUserInfo() {
             try {
+                const email = (this.data.email || '').trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    this.$message.error('请输入有效的邮箱地址');
+                    return;
+                }
                 const userUpdateDTO = {
                     userAvatar: this.data.url,
                     userName: this.data.name,
-                    userEmail: this.data.email,
+                    userEmail: email,
                     birthDate: this.data.birthDate
                 }
                 

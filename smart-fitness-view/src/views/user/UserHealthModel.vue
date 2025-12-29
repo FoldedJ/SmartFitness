@@ -89,7 +89,7 @@ export default {
         return {
             usersHealthModelConfig: [],
             modelConfigList: [],
-            userHealthQueryDto: {}, // 查询的参数
+            userHealthQueryDto: { healthModelConfigId: null, time: 365 }, // 查询的参数
             values: [],
             dates: [],
             tableData: [],
@@ -104,6 +104,13 @@ export default {
     created() {
         this.loadHealthModelConfig();
         this.fetchFreshData();
+    },
+    watch: {
+        'userHealthQueryDto.healthModelConfigId'(newVal) {
+            if (newVal) {
+                this.loadUserModelHavaRecord();
+            }
+        }
     },
     methods: {
         handleDelete(row) {
@@ -252,10 +259,14 @@ export default {
         },
         // 默认加载
         defaultLoad() {
-            this.userHealthQueryDto.healthModelConfigId = this.modelConfigList[3].id;
-            // 数少，查一年
-            this.userHealthQueryDto.time = 365;
-            this.loadUserModelHavaRecord();
+            const defaultModel = this.modelConfigList.find(m => m && m.name === '体重') || this.modelConfigList[0];
+            if (defaultModel) {
+                this.userHealthQueryDto.healthModelConfigId = defaultModel.id;
+                this.userHealthQueryDto.time = this.userHealthQueryDto.time || 365;
+                this.$nextTick(() => {
+                    this.loadUserModelHavaRecord();
+                });
+            }
         },
         // 折线图选择指定事件范围之后，返回的一个回调
         onSelectedTime(time) {

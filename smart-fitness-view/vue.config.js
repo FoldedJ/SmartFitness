@@ -2,7 +2,7 @@ module.exports = {
     lintOnSave: false,
     assetsDir: 'static',
     parallel: false,
-    publicPath: './',
+    publicPath: '/',
     devServer: {
         host: "localhost",
         port: 21091,

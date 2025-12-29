@@ -39,27 +39,24 @@
                         style="padding: 10px 6px;margin-right: 40px;height: 500px;overflow-y: scroll;overflow-x: hidden;">
                         <div @click="modelSelected(model)" class="item-model" v-for="(model, index) in modelList"
                             :key="index">
-                            <el-tooltip class="item" effect="dark" :content="'该项配置【' + model.name + '】，点击即可选中'"
-                                placement="bottom">
-                                <el-row style="padding: 20px 0;">
-                                    <el-col :span="4">
-                                        <img :src="model.cover" style="width: 50px;height: 50px;margin-top: 5px;">
-                                    </el-col>
-                                    <el-col :span="20">
-                                        <div style="padding: 0 10px;">
-                                            <div style="font-size: 24px;font-weight: bolder;">{{ model.name }}</div>
-                                            <div style="font-size: 14px;margin-top: 5px;">
-                                                <span>{{ model.unit }}</span>
-                                                <span style="margin-left: 10px;">{{ model.symbol }}</span>
-                                                <span @click="updateModel(model)" v-if="!model.isGlobal"
-                                                    style="margin-left: 10px;color: #333;">修改</span>
-                                                <span @click="deleteModel(model)" v-if="!model.isGlobal"
-                                                    style="margin-left: 10px;color: red;">删除</span>
-                                            </div>
+                            <el-row style="padding: 20px 0;">
+                                <el-col :span="4">
+                                    <img :src="model.cover" style="width: 50px;height: 50px;margin-top: 5px;">
+                                </el-col>
+                                <el-col :span="20">
+                                    <div style="padding: 0 10px;">
+                                        <div style="font-size: 24px;font-weight: bolder;">{{ model.name }}</div>
+                                        <div style="font-size: 14px;margin-top: 5px;">
+                                            <span>{{ model.unit }}</span>
+                                            <span style="margin-left: 10px;">{{ model.symbol }}</span>
+                                            <span @click="updateModel(model)" v-if="!model.isGlobal"
+                                                style="margin-left: 10px;color: #333;">修改</span>
+                                            <span @click="deleteModel(model)" v-if="!model.isGlobal"
+                                                style="margin-left: 10px;color: red;">删除</span>
                                         </div>
-                                    </el-col>
-                                </el-row>
-                            </el-tooltip>
+                                    </div>
+                                </el-col>
+                            </el-row>
                         </div>
                     </div>
                 </el-col>
@@ -75,7 +72,12 @@
                             </el-row>
                             <el-row>
                                 <el-col :span="12" v-for="(model, index) in selectedModel" :key="index">
-                                    <h3>{{ model.name }}({{ model.unit }})</h3>
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <h3 style="margin: 0;">{{ model.name }}({{ model.unit }})</h3>
+                                        <span @click="cancelSelectedModel(model)" style="cursor: pointer; color: #909399;">
+                                            <i class="el-icon-close"></i>
+                                        </span>
+                                    </div>
                                     <input type="text" v-model="model.value" class="input-model"
                                         :placeholder="'正常值范围：' + model.valueRange">
                                 </el-col>
@@ -158,6 +160,7 @@
 </template>
 <script>
 import Logo from '@/components/Logo';
+import { getUserInfo as getUserInfoUtil } from '@/utils/user.js';
 export default {
     components: { Logo },
     data() {
@@ -174,7 +177,7 @@ export default {
         };
     },
     created() {
-        this.getUserInfo();
+        this.loadUserInfo();
         this.getAllModelConfig();
         this.getUser();
     },
@@ -283,6 +286,9 @@ export default {
                 this.selectedModel.push(model);
             }
         },
+        cancelSelectedModel(model) {
+            this.selectedModel = this.selectedModel.filter(entity => entity.id !== model.id);
+        },
         searModel() {
             this.getAllModelConfig();
         },
@@ -341,8 +347,8 @@ export default {
                 }
             });
         },
-        getUserInfo() {
-            const userInfoData = getUserInfo();
+        loadUserInfo() {
+            const userInfoData = getUserInfoUtil();
             if (userInfoData) {
                 this.userInfo = userInfoData;
             }

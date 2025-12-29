@@ -14,6 +14,13 @@
         </foreach>
     </delete>
 
+    <delete id="deleteByNewsIds" parameterType="list">
+        DELETE FROM SYSDBA.NEWS_SAVE WHERE NEWS_ID IN
+        <foreach collection="newsIds" item="newsId" open="(" separator="," close=")">
+            #{newsId}
+        </foreach>
+    </delete>
+
     <select id="query" resultMap="BaseResultMap">
 
         SELECT ns.*,

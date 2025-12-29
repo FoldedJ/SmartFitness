@@ -42,6 +42,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 import java.util.Objects;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -261,6 +262,22 @@ public class NutritionServiceImpl implements NutritionService {
                 log.warn("未找到注意事项");
             }
             
+            String notesStr = "饮食建议: " + String.join("; ", suggestions) + "；注意事项: " + String.join("; ", notes);
+            byte[] notesBytes = notesStr.getBytes(StandardCharsets.UTF_8);
+            if (notesBytes.length > 500) {
+                StringBuilder sb = new StringBuilder();
+                int count = 0;
+                for (int i = 0; i < notesStr.length(); i++) {
+                    String ch = notesStr.substring(i, i + 1);
+                    int len = ch.getBytes(StandardCharsets.UTF_8).length;
+                    if (count + len > 500) {
+                        break;
+                    }
+                    sb.append(ch);
+                    count += len;
+                }
+                notesStr = sb.toString();
+            }
             // 创建营养推荐
             NutritionRecommendation recommendation = NutritionRecommendation.builder()
                     .userId(userId)
@@ -272,7 +289,7 @@ public class NutritionServiceImpl implements NutritionService {
                     .fiber(fiber)
                     .sodium(sodium)
                     .recommendationType("DAILY")
-                    .notes("基于混元模型生成的营养推荐: " + String.join("; ", notes))
+                    .notes(notesStr)
                     .createTime(LocalDateTime.now())
                     .build();
             
