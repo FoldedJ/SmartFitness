@@ -45,8 +45,8 @@ public class EvaluationsServiceImpl implements EvaluationsService {
             return ApiResult.error("账户已被禁言");
         }
         
-        // 如果是回复评论且parentId不为空，自动设置replierId为被回复评论的commenterId
-        if (evaluations.getParentId() != null) {
+        // 如果是回复评论且parentId不为空，且replierId为空时，自动设置replierId为被回复评论的commenterId
+        if (evaluations.getParentId() != null && evaluations.getReplierId() == null) {
             // 查询被回复的评论
             Evaluations parentComment = evaluationsMapper.getById(evaluations.getParentId());
             if (parentComment != null) {

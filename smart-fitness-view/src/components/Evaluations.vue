@@ -57,9 +57,14 @@
                         </span>
                         <span @click="upvote(comment)"
                             style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
-                            <i class="el-icon-discount" v-if="!comment.upvoteFlag">点赞</i>
-                            <i class="el-icon-discount" v-else style="color: #1E80FF;">&nbsp;{{ comment.upvoteCount
-                                }}</i>
+                            <span v-if="!comment.upvoteFlag">
+                                <svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align: -2px;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#8A919F" stroke-width="2"></path></svg>
+                                点赞
+                            </span>
+                            <span v-else style="color: red;">
+                                <svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align: -2px;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="red" stroke="none"></path></svg>
+                                &nbsp;{{ comment.upvoteCount }}
+                            </span>
                         </span>
                     </el-col>
                 </el-row>
@@ -121,9 +126,14 @@
                                 </span>
                                 <span @click="upvote(commentChild)"
                                     style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
-                                    <i class="el-icon-discount" v-if="!commentChild.upvoteFlag">点赞</i>
-                                    <i class="el-icon-discount" v-else style="color: #1E80FF;">&nbsp;{{
-                                        commentChild.upvoteCount }}</i>
+                                    <span v-if="!commentChild.upvoteFlag">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align: -2px;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#8A919F" stroke-width="2"></path></svg>
+                                        点赞
+                                    </span>
+                                    <span v-else style="color: red;">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align: -2px;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="red" stroke="none"></path></svg>
+                                        &nbsp;{{ commentChild.upvoteCount }}
+                                    </span>
                                 </span>
                             </el-row>
                             <!-- 子级评论的回复按钮和输入框 -->
@@ -442,8 +452,8 @@ export default {
             // 详细记录评论对象信息
             console.log('评论对象详情:', JSON.stringify(comment));
             
-            // 不再需要保存被回复者ID，后端会根据parentId自动获取
-            // 移除设置currentReplierId的逻辑
+            // 保存被回复者ID
+            this.currentReplierId = comment.userId;
         },
         // 父级评论回复提交
         submitReply(comment) {
@@ -542,7 +552,7 @@ export default {
             // 关键修改：确保parentId始终是顶级父评论的ID
             // 如果是回复子评论，需要使用子评论的parentId或其自身的id作为新评论的parentId
             const evaluationsDTO = {
-                // 移除replierId字段，让后端根据parentId自动获取被回复评论的commenterId
+                replierId: replierId,
                 contentType: this.contentType,
                 content: this.replyChildContent,
                 contentId: this.contentId,
