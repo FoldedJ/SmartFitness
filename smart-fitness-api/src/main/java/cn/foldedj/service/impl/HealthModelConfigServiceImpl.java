@@ -2,18 +2,22 @@ package cn.foldedj.service.impl;
 
 import cn.foldedj.context.LocalThreadHolder;
 import cn.foldedj.mapper.HealthModelConfigMapper;
+import cn.foldedj.mapper.UserHealthMapper;
 import cn.foldedj.pojo.api.ApiResult;
 import cn.foldedj.pojo.api.PageResult;
 import cn.foldedj.pojo.api.Result;
 import cn.foldedj.pojo.dto.query.extend.HealthModelConfigQueryDto;
+import cn.foldedj.pojo.dto.query.extend.UserHealthQueryDto;
 import cn.foldedj.pojo.entity.HealthModelConfig;
 import cn.foldedj.pojo.vo.HealthModelConfigVO;
+import cn.foldedj.pojo.vo.UserHealthVO;
 import cn.foldedj.service.HealthModelConfigService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 健康模型业务逻辑实现
@@ -23,6 +27,9 @@ public class HealthModelConfigServiceImpl implements HealthModelConfigService {
 
     @Resource
     private HealthModelConfigMapper healthModelConfigMapper;
+
+    @Resource
+    private UserHealthMapper userHealthMapper;
 
     /**
      * 健康模型新增
@@ -46,6 +53,18 @@ public class HealthModelConfigServiceImpl implements HealthModelConfigService {
      */
     @Override
     public Result<Void> batchDelete(List<Long> ids) {
+        // 先删除关联的用户健康记录
+        for (Long id : ids) {
+            UserHealthQueryDto userHealthQueryDto = new UserHealthQueryDto();
+            userHealthQueryDto.setHealthModelConfigId(id.intValue());
+            List<UserHealthVO> userHealths = userHealthMapper.query(userHealthQueryDto);
+            if (userHealths != null && !userHealths.isEmpty()) {
+                List<Long> userHealthIds = userHealths.stream()
+                        .map(vo -> Long.valueOf(vo.getId()))
+                        .collect(Collectors.toList());
+                userHealthMapper.batchDelete(userHealthIds);
+            }
+        }
         healthModelConfigMapper.batchDelete(ids);
         return ApiResult.success();
     }

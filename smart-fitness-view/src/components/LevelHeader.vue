@@ -40,7 +40,11 @@ export default {
     data() {
         return {
             showFlag: sessionStorage.getItem('flag') === 'true',
+            noReadMsg: 0,
         };
+    },
+    mounted() {
+        this.loadMsgCount();
     },
     props: {
         tag: {
