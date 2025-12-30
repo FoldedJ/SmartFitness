@@ -101,76 +101,76 @@
     >
 
       <div v-if="selectedFood" class="food-detail">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>食物名称：</label>
-              <span>{{ selectedFood.foodName }}</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>份量：</label>
-              <span>{{ selectedFood.servingSize }}{{ selectedFood.servingUnit }}</span>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>热量：</label>
-              <span>{{ selectedFood.calories || 0 }} kcal</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>蛋白质：</label>
-              <span>{{ selectedFood.protein || 0 }} g</span>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>碳水化合物：</label>
-              <span>{{ selectedFood.carbohydrate || 0 }} g</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>脂肪：</label>
-              <span>{{ selectedFood.fat || 0 }} g</span>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>纤维：</label>
-              <span>{{ selectedFood.fiber || 0 }} g</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>钠：</label>
-              <span>{{ selectedFood.sodium || 0 }} mg</span>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>来源：</label>
-              <span>{{ selectedFood.source || '未知' }}</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="detail-item">
-              <label>创建时间：</label>
-              <span>{{ formatDate(selectedFood.createTime) }}</span>
-            </div>
-          </el-col>
-        </el-row>
+        <el-descriptions title="基本信息" :column="2" border>
+          <el-descriptions-item label="食物名称">
+            <span style="font-weight: bold;">{{ selectedFood.foodName }}</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="份量">
+            {{ selectedFood.servingSize }}{{ selectedFood.servingUnit }}
+          </el-descriptions-item>
+          <el-descriptions-item label="来源">
+            <el-tag size="small" :type="selectedFood.source === '官方' ? 'success' : 'info'">{{ selectedFood.source || '未知' }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="创建时间">
+            {{ formatDate(selectedFood.createTime) }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <div style="margin-top: 20px;">
+          <span style="font-size: 16px; font-weight: bold; color: #303133; margin-bottom: 15px; display: block;">营养成分 (每份)</span>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-card shadow="hover" :body-style="{ padding: '15px', textAlign: 'center' }">
+                <div style="color: #F56C6C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+                  {{ selectedFood.calories || 0 }}
+                </div>
+                <div style="color: #909399; font-size: 14px;">热量 (kcal)</div>
+              </el-card>
+            </el-col>
+            <el-col :span="8">
+              <el-card shadow="hover" :body-style="{ padding: '15px', textAlign: 'center' }">
+                <div style="color: #67C23A; font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+                  {{ selectedFood.protein || 0 }}
+                </div>
+                <div style="color: #909399; font-size: 14px;">蛋白质 (g)</div>
+              </el-card>
+            </el-col>
+            <el-col :span="8">
+              <el-card shadow="hover" :body-style="{ padding: '15px', textAlign: 'center' }">
+                <div style="color: #E6A23C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+                  {{ selectedFood.fat || 0 }}
+                </div>
+                <div style="color: #909399; font-size: 14px;">脂肪 (g)</div>
+              </el-card>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin-top: 15px;">
+            <el-col :span="8">
+              <el-card shadow="hover" :body-style="{ padding: '15px', textAlign: 'center' }">
+                <div style="color: #409EFF; font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+                  {{ selectedFood.carbohydrate || 0 }}
+                </div>
+                <div style="color: #909399; font-size: 14px;">碳水化合物 (g)</div>
+              </el-card>
+            </el-col>
+            <el-col :span="8">
+              <el-card shadow="hover" :body-style="{ padding: '15px', textAlign: 'center' }">
+                <div style="color: #909399; font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+                  {{ selectedFood.fiber || 0 }}
+                </div>
+                <div style="color: #909399; font-size: 14px;">纤维 (g)</div>
+              </el-card>
+            </el-col>
+            <el-col :span="8">
+              <el-card shadow="hover" :body-style="{ padding: '15px', textAlign: 'center' }">
+                <div style="color: #909399; font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+                  {{ selectedFood.sodium || 0 }}
+                </div>
+                <div style="color: #909399; font-size: 14px;">钠 (mg)</div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="detailDialogVisible = false">关闭</el-button>
