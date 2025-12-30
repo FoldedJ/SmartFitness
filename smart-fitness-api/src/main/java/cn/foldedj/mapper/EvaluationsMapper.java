@@ -63,6 +63,14 @@ public interface EvaluationsMapper {
     void batchDelete(@Param(value = "ids") List<Integer> ids);
 
     /**
+     * 根据内容ID列表和内容类型批量删除评论
+     *
+     * @param ids         内容ID列表
+     * @param contentType 内容类型
+     */
+    void deleteByContentIds(@Param(value = "ids") List<Integer> ids, @Param(value = "contentType") String contentType);
+
+    /**
      * 查询指定评论的数目
      *
      * @param contentId   内容ID

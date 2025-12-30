@@ -127,6 +127,15 @@
         </foreach>
     </delete>
 
+    <delete id="deleteByContentIds">
+        DELETE FROM SYSDBA.EVALUATIONS
+        WHERE CONTENT_TYPE = #{contentType}
+        AND CONTENT_ID IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <!--评论信息新增-->
     <insert id="save">
         INSERT INTO SYSDBA.EVALUATIONS(PARENT_ID, COMMENTER_ID, REPLIER_ID, CONTENT_TYPE, CONTENT_ID, CONTENT,

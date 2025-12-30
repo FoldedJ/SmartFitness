@@ -2,6 +2,7 @@ package cn.foldedj.service.impl;
 
 import cn.foldedj.mapper.NewsMapper;
 import cn.foldedj.mapper.NewsSaveMapper;
+import cn.foldedj.mapper.EvaluationsMapper;
 import cn.foldedj.pojo.api.ApiResult;
 import cn.foldedj.pojo.api.PageResult;
 import cn.foldedj.pojo.api.Result;
@@ -25,6 +26,8 @@ public class NewsServiceImpl implements NewsService {
     private NewsMapper newsMapper;
     @Resource
     private NewsSaveMapper newsSaveMapper;
+    @Resource
+    private EvaluationsMapper evaluationsMapper;
 
     /**
      * 健康资讯新增
@@ -49,6 +52,8 @@ public class NewsServiceImpl implements NewsService {
     public Result<Void> batchDelete(List<Integer> ids) {
         // 删除关联的收藏记录
         newsSaveMapper.deleteByNewsIds(ids);
+        // 删除关联的评论记录
+        evaluationsMapper.deleteByContentIds(ids, "NEWS");
         newsMapper.batchDelete(ids);
         return ApiResult.success();
     }
