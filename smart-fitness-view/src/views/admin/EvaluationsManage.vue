@@ -356,6 +356,9 @@ export default {
             this.currentPage = 1;
             this.fetchFreshData();
         },
+        handleFilterClear() {
+            this.handleFilter();
+        },
         handleSizeChange(val) {
             this.pageSize = val;
             this.currentPage = 1;
